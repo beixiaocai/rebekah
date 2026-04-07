@@ -64,7 +64,7 @@
 
                         // 设置默认编号
                         $('#stream_code').val(stream.code || '');
-                        $('#stream_camera_device_id').val(stream.code || '');
+                        $('#stream_camera_device_id').val(stream.camera_device_id || '');
 
                         // 填充接入协议和音频类型选项
                         if (res.pull_stream_types) {

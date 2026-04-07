@@ -781,7 +781,7 @@
                 <i class="fa fa-plus"></i> {{ T.camera_add|default:'添加' }}
             </button>
             
-            <button class="xc_btn-modern" data-toggle="modal" data-target="#ImportFileDialog">
+            <button class="xc_btn-modern" onclick="openImportModal()">
                 <i class="fa fa-upload"></i> {{ T.camera_batch_import|default:'批量导入' }}
             </button>
             
@@ -835,45 +835,241 @@
     </div>
 
     <!--批量导入弹窗start -->
-    <div id="ImportFileDialog" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
+    <style>
+    /* 批量导入弹窗样式 */
+    .xc_import-modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+    }
 
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4 class="modal-title" >{{ T.camera_import_title|default:'批量导入摄像头' }}</h4>
-          </div>
-          <div class="modal-body">
-            <div style="padding: 5px 20px;">
-              <form class="form-horizontal calender" role="form">
-                  <div class="form-group">
-                  <label class="col-sm-3 control-label">{{ T.camera_file_template|default:'文件模板' }}</label>
-                  <div class="col-sm-9">
-                      <button onclick="f_downloadStreamTemplate()" class="btn btn-default"><i class="fa fa-download"></i> {{ T.camera_download_template|default:'下载模板' }}</button>
-                  </div>
-                </div>
+    .xc_import-modal-overlay.active {
+        display: flex;
+    }
 
-                <div class="form-group">
-                  <label class="col-sm-3 control-label">{{ T.camera_import_file|default:'导入文件' }}</label>
-                  <div class="col-sm-9">
-                    <input type="file" class="form-control" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" name="file"  >
-                  </div>
+    .xc_import-modal-container {
+        width: 90%;
+        max-width: 520px;
+        background: white;
+        border-radius: 6px;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        animation: xc_importModalSlideIn 0.3s ease;
+    }
+
+    @keyframes xc_importModalSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .xc_import-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 16px;
+        border-bottom: 1px solid #e5e7eb;
+        background: #fafafa;
+        border-radius: 6px 6px 0 0;
+    }
+
+    .xc_import-modal-title {
+        font-size: 14px;
+        font-weight: 500;
+        color: #374151;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .xc_import-modal-title i {
+        color: #3b82f6;
+        font-size: 14px;
+    }
+
+    .xc_import-modal-close {
+        width: 26px;
+        height: 26px;
+        border: none;
+        background: white;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        color: #6b7280;
+        font-size: 16px;
+    }
+
+    .xc_import-modal-close:hover {
+        background: #f3f4f6;
+        color: #374151;
+    }
+
+    .xc_import-modal-body {
+        flex: 1;
+        padding: 10px 16px;
+    }
+
+    .xc_import-modal-footer {
+        padding: 8px 16px;
+        border-top: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        background: #fafafa;
+    }
+
+    .xc_import-form-group {
+        margin-bottom: 10px;
+    }
+
+    .xc_import-form-label {
+        display: block;
+        font-size: 13px;
+        color: #606266;
+        margin-bottom: 3px;
+        font-weight: 500;
+    }
+
+    .xc_import-form-textarea {
+        width: 100%;
+        padding: 5px 10px;
+        font-size: 13px;
+        border: 1px solid #dcdfe6;
+        border-radius: 4px;
+        transition: border-color 0.2s;
+        background: white;
+        min-height: 55px;
+        resize: vertical;
+        line-height: 1.5;
+    }
+
+    .xc_import-form-textarea:focus {
+        border-color: #3b82f6;
+        outline: none;
+    }
+
+    .xc_import-btn {
+        padding: 5px 12px;
+        font-size: 13px;
+        border-radius: 4px;
+        border: 1px solid;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .xc_import-btn-primary {
+        background: #3b82f6;
+        border-color: #3b82f6;
+        color: white;
+    }
+
+    .xc_import-btn-primary:hover {
+        background: #2563eb;
+        border-color: #2563eb;
+    }
+
+    .xc_import-btn-default {
+        background: white;
+        border-color: #d1d5db;
+        color: #374151;
+    }
+
+    .xc_import-btn-default:hover {
+        background: #f9fafb;
+        border-color: #3b82f6;
+        color: #3b82f6;
+    }
+
+    .xc_import-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .xc_import-file-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .xc_import-file-input {
+        flex: 1;
+        padding: 5px 10px;
+        font-size: 13px;
+        border: 1px solid #dcdfe6;
+        border-radius: 4px;
+        background: white;
+    }
+
+    .xc_import-tips {
+        font-size: 12px;
+        color: #909399;
+        margin-top: 3px;
+    }
+    </style>
+
+    <div class="xc_import-modal-overlay" id="import_modal">
+        <div class="xc_import-modal-container">
+            <div class="xc_import-modal-header">
+                <div class="xc_import-modal-title">
+                    <i class="fa fa-upload"></i>
+                    <span>{{ T.camera_import_title|default:'批量导入摄像头' }}</span>
                 </div>
-                <div class="form-group">
-                  <label class="col-sm-3 control-label">{{ T.camera_import_remark|default:'导入备注' }}</label>
-                  <div class="col-sm-9">
-                    <textarea class="form-control" style="height:55px;" name="import_remark"></textarea>
-                  </div>
-                </div>
-              </form>
+                <button class="xc_import-modal-close" onclick="closeImportModal()">
+                    <i class="fa fa-times"></i>
+                </button>
             </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">{{ T.camera_cancel|default:'取消' }}</button>
-            <button type="button" onclick="f_openImportFile()" class="btn btn-dark">{{ T.camera_submit|default:'提交' }}</button>
-          </div>
+            
+            <div class="xc_import-modal-body">
+                <div class="xc_import-form-group">
+                    <label class="xc_import-form-label">{{ T.camera_file_template|default:'文件模板' }}</label>
+                    <button type="button" class="xc_import-btn xc_import-btn-default" onclick="f_downloadStreamTemplate()">
+                        <i class="fa fa-download"></i> {{ T.camera_download_template|default:'下载模板' }}
+                    </button>
+                </div>
+
+                <div class="xc_import-form-group">
+                    <label class="xc_import-form-label">{{ T.camera_import_file|default:'导入文件' }}<span style="color: #f56c6c; margin-left: 2px;">*</span></label>
+                    <div class="xc_import-file-wrapper">
+                        <input type="file" id="import_file_input" class="xc_import-file-input" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                    </div>
+                </div>
+
+                <div class="xc_import-form-group">
+                    <label class="xc_import-form-label">{{ T.camera_import_remark|default:'导入备注' }}</label>
+                    <textarea id="import_remark_input" class="xc_import-form-textarea" placeholder="{{ T.streamform_remark_placeholder|default:'请输入备注信息' }}"></textarea>
+                </div>
+            </div>
+            
+            <div class="xc_import-modal-footer">
+                <button type="button" class="xc_import-btn xc_import-btn-default" onclick="closeImportModal()">
+                    {{ T.camera_cancel|default:'取消' }}
+                </button>
+                <button type="button" id="import_submit_btn" class="xc_import-btn xc_import-btn-primary" onclick="f_openImportFile()">
+                    <i class="fa fa-check" id="import_submit_icon"></i>
+                    <i class="fa fa-spinner fa-spin" id="import_submit_spinner" style="display:none;"></i>
+                    <span id="import_submit_text">{{ T.camera_submit|default:'提交' }}</span>
+                </button>
+            </div>
         </div>
-      </div>
     </div>
     <!--批量导入弹窗end -->
     
@@ -934,6 +1130,12 @@
         let username_s = encryptor.encrypt(username);
         let password_s = encryptor.encrypt(password);
 
+        // 显示转圈特效
+        $('#onvif_detect_icon').hide();
+        $('#onvif_detect_spinner').show();
+        $('#onvif_detect_btn').prop('disabled', true);
+        $('#onvif_detect_text').text(_t("common_loading", "探测中..."));
+
         $.ajax({
             url: "/onvif/openCheckDevice",
             type: "post",
@@ -959,11 +1161,18 @@
 
                     myToast2025(_t("camera_probe_success", "探测成功"), "success");
                 } else {
-                    myToast2025(res.msg || _t("camera_probe_fail", "探测失败"), "error");
+                    myToast2025(res.msg || _t("camera_probe_fail", "探测失败"), "error",3000);
                 }
             },
             error: () => {
                 myToast2025(_t("online_net_error", "网络异常，请确定网络正常！"), "error");
+            },
+            complete: () => {
+                // 恢复按钮状态
+                $('#onvif_detect_icon').show();
+                $('#onvif_detect_spinner').hide();
+                $('#onvif_detect_btn').prop('disabled', false);
+                $('#onvif_detect_text').text(_t("streamform_detect_device", "探测设备"));
             }
         });
     }
@@ -1054,54 +1263,79 @@
     }
 
     function f_openImportFile() {
-
-        if (eleFile[0].files.length > 0){
-          let file = eleFile[0].files[0];
-           let importRemark = eleTextareaImportRemark.val().trim();
-
-          let fs_name = file.name;
-          let fs_size = file.size;//文件字节大小
-          let fs_size_m = parseInt(fs_size / 1024 / 1024); //换算成M单位
-
-          if (fs_size_m <= 10){
-                let formData = new FormData();
-                formData.append('file',file)
-                formData.append('importRemark',importRemark)
-
-                $.ajax({
-                  url:'/stream/openImportFile',
-                  type:'post',
-                  async: true,
-                  contentType:false,
-                  processData:false,
-                  data:formData,
-                  dataType: "json",
-                  timeout: 0,
-                  error: function () {
-                    myToast2025(_t("online_net_error", "网络异常，请确定网络正常！"), "error");
-                  },
-                  success: function (res) {
-                    if (1000 === res.code) {
-                        myToast2025(res.msg,"success");
-                        // data-toggle="modal" data-target="#ImportFileDialog"
-                        //$("#ImportFileDialog").modal("show");
-                        $("#ImportFileDialog").modal("hide");
-
-                        curPage = 1;
-                        f_openIndex(curPage,curPageSize);
-
-                    }else{
-                        myToast2025(res.msg,"error");
-                    }
-                  }
-                });
-          }else{
-               myToast2025(_t("camera_file_size_limit", "上传文件大小不能超过10M！"), "error");
-          }
-        }else{
+        let fileInput = document.getElementById('import_file_input');
+        let file = fileInput.files[0];
+        
+        if (!file) {
             myToast2025(_t("camera_no_file", "未选择上传文件！"), "error");
+            return;
         }
-        return false;
+        
+        let importRemark = document.getElementById('import_remark_input').value.trim();
+        let fs_size = file.size;
+        let fs_size_m = parseInt(fs_size / 1024 / 1024);
+        
+        if (fs_size_m > 10) {
+            myToast2025(_t("camera_file_size_limit", "上传文件大小不能超过10M！"), "error");
+            return;
+        }
+        
+        // 显示转圈特效
+        $('#import_submit_icon').hide();
+        $('#import_submit_spinner').show();
+        $('#import_submit_btn').prop('disabled', true);
+        $('#import_submit_text').text(_t("common_loading", "导入中..."));
+        
+        let formData = new FormData();
+        formData.append('file', file);
+        formData.append('importRemark', importRemark);
+        
+        $.ajax({
+            url: '/stream/openImportFile',
+            type: 'post',
+            async: true,
+            contentType: false,
+            processData: false,
+            data: formData,
+            dataType: "json",
+            timeout: 0,
+            error: function () {
+                myToast2025(_t("online_net_error", "网络异常，请确定网络正常！"), "error");
+            },
+            success: function (res) {
+                if (1000 === res.code) {
+                    myToast2025(res.msg, "success");
+
+                    setTimeout(function() {
+                        closeImportModal();
+                        curPage = 1;
+                        f_openIndex(curPage, curPageSize);
+                    }, 2000);
+                } else {
+                    myToast2025(res.msg, "error");
+                }
+            },
+            complete: function () {
+                // 恢复按钮状态
+                $('#import_submit_icon').show();
+                $('#import_submit_spinner').hide();
+                $('#import_submit_btn').prop('disabled', false);
+                $('#import_submit_text').text(_t("camera_submit", "提交"));
+            }
+        });
+    }
+    
+    // 打开批量导入弹框
+    function openImportModal() {
+        document.getElementById('import_modal').classList.add('active');
+    }
+    
+    // 关闭批量导入弹框
+    function closeImportModal() {
+        document.getElementById('import_modal').classList.remove('active');
+        // 清空表单
+        document.getElementById('import_file_input').value = '';
+        document.getElementById('import_remark_input').value = '';
     }
     function f_openHandleStreamProxy(handle,code,pull_stream_type){
 
