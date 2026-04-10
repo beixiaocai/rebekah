@@ -416,8 +416,8 @@
                 <!-- 标签页 -->
                 <div class="config_tabs">
                   <button class="config_tab active" onclick="switchTab(event, 'tab1')">{{ T.syscfg_basic_tab|default:'基础配置' }}</button>
-                  <button class="config_tab" onclick="switchTab(event, 'tab2')">{{ T.syscfg_storage_tab|default:'存储配置' }}</button>
                   <button class="config_tab" onclick="switchTab(event, 'tab3')">{{ T.syscfg_gb28181_tab|default:'GB28181配置' }}</button>
+                  <button class="config_tab" onclick="switchTab(event, 'tab6')">{{ T.syscfg_cascade_tab|default:'GB28181级联' }}</button>
                   <button class="config_tab" onclick="switchTab(event, 'tab4')">{{ T.syscfg_cluster_tab|default:'集群配置' }}</button>
                   <button class="config_tab" onclick="switchTab(event, 'tab5')">{{ T.syscfg_oem_tab|default:'OEM配置' }}</button>
                 </div>
@@ -452,6 +452,13 @@
                         <label class="config_label">{{ T.syscfg_install|default:'软件安装路径' }}</label>
                         <div class="config_control">
                           <input type="text" name="install" required="required" value="{{config.install}}" class="config_input">
+                        </div>
+                      </div>
+
+                      <div class="config_form_group">
+                        <label class="config_label">{{ T.syscfg_storage_dir|default:'数据存储路径' }}</label>
+                        <div class="config_control">
+                          <input type="text" name="storageDir" value="{{config.storageDir}}" required="required" class="config_input">
                         </div>
                       </div>
 
@@ -607,25 +614,7 @@
                         </div>
                       </div>
 
-                    </div>
-                  </div>
-                </div>
-
-                <!-- 存储配置内容 -->
-                <div id="tab2" class="config_tab_content">
-
-                  <div class="config_two_cols">
-                    <div class="config_col">
-                      <div class="config_form_group">
-                        <label class="config_label">{{ T.syscfg_storage_dir|default:'数据存储路径' }}</label>
-                        <div class="config_control">
-                          <input type="text" name="storageDir" value="{{config.storageDir}}" required="required" class="config_input">
-                        </div>
-                      </div>
-
-                    </div>
-
-                    <div class="config_col">
+                      <!-- 存储配置部分 -->
                       <div class="config_form_group">
                         <label class="config_label">{{ T.syscfg_alarm_size|default:'报警容量(G)' }}</label>
                         <div class="config_control">
@@ -641,6 +630,7 @@
                           <span class="config_hint" id="recordFolderSize"></span>
                         </div>
                       </div>
+
                     </div>
                   </div>
                 </div>
@@ -680,7 +670,7 @@
                       <div class="config_form_group">
                         <label class="config_label">{{ T.syscfg_server_pass|default:'服务器密码' }}</label>
                         <div class="config_control">
-                          <input type="text" name="sipServerPass" required="required" value="{{config.sipServer.sipServerPass}}" class="config_input">
+                          <input type="password" name="sipServerPass" required="required" value="{{config.sipServer.sipServerPass}}" class="config_input">
                         </div>
                       </div>
                     </div>
@@ -721,6 +711,147 @@
                           </div>
                         </div>
                       </div>
+
+                      <div class="config_form_group">
+                        <label class="config_label">{{ T.syscfg_auto_invite_after_catalog|default:'自动INVITE' }}</label>
+                        <div class="config_control">
+                          <div class="xc_switch_container">
+                            <label class="xc_switch">
+                              <input type="checkbox" name="autoInviteAfterRecCateLog" value="1" {% if config.sipServer.autoInviteAfterRecCateLog %}checked{% endif %}>
+                              <span class="xc_switch_slider"></span>
+                            </label>
+                            <span class="xc_switch_label">{{ T.syscfg_auto_invite_desc|default:'收到设备Catalog响应后自动发起INVITE请求' }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- GB28181级联配置内容 -->
+                <div id="tab6" class="config_tab_content">
+                  <div class="config_two_cols">
+                    <div class="config_col">
+                      <div class="config_form_group">
+                        <label class="config_label">{{ T.syscfg_enable_cascade|default:'启用级联' }}</label>
+                        <div class="config_control">
+                          <div class="xc_switch_container">
+                            <label class="xc_switch">
+                              <input type="checkbox" name="cascadeEnable" value="1" {% if config.sipParentServer.enable %}checked{% endif %}>
+                              <span class="xc_switch_slider"></span>
+                            </label>
+                            <span class="xc_switch_label">{{ T.syscfg_enable_cascade_desc|default:'是否启用向上级平台级联' }}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="config_form_group">
+                        <label class="config_label">{{ T.syscfg_parent_server_ip|default:'上级平台IP' }}</label>
+                        <div class="config_control">
+                          <input type="text" name="sipParentServerIp" value="{{config.sipParentServer.sipServerIp}}" class="config_input">
+                        </div>
+                      </div>
+
+                      <div class="config_form_group">
+                        <label class="config_label">{{ T.syscfg_parent_server_port|default:'上级平台端口' }}</label>
+                        <div class="config_control">
+                          <input type="number" name="sipParentServerPort" value="{{config.sipParentServer.sipServerPort}}" class="config_input">
+                        </div>
+                      </div>
+
+                      <div class="config_form_group">
+                        <label class="config_label">{{ T.syscfg_local_sip_port|default:'本地SIP端口' }}</label>
+                        <div class="config_control">
+                          <input type="number" name="sipLocalPort" value="{{config.sipParentServer.sipLocalPort}}" class="config_input">
+                        </div>
+                      </div>
+
+                      <div class="config_form_group">
+                        <label class="config_label">{{ T.syscfg_parent_server_id|default:'上级平台ID' }}</label>
+                        <div class="config_control">
+                          <input type="text" name="sipParentServerId" value="{{config.sipParentServer.sipServerId}}" class="config_input">
+                        </div>
+                      </div>
+
+                      <div class="config_form_group">
+                        <label class="config_label">{{ T.syscfg_parent_server_realm|default:'上级平台域' }}</label>
+                        <div class="config_control">
+                          <input type="text" name="sipParentServerRealm" value="{{config.sipParentServer.sipServerRealm}}" class="config_input">
+                        </div>
+                      </div>
+
+                      <div class="config_form_group">
+                        <label class="config_label">{{ T.syscfg_parent_server_pass|default:'上级平台密码' }}</label>
+                        <div class="config_control">
+                          <input type="password" name="sipParentServerPass" value="{{config.sipParentServer.sipServerPass}}" class="config_input">
+                        </div>
+                      </div>
+
+                      <div class="config_form_group">
+                        <label class="config_label">{{ T.syscfg_local_id|default:'本级平台ID' }}</label>
+                        <div class="config_control">
+                          <input type="text" name="sipLocalId" value="{{config.sipParentServer.sipLocalId}}" class="config_input">
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="config_col">
+                      <div class="config_form_group">
+                        <label class="config_label">{{ T.syscfg_signal_protocol|default:'信令传输协议' }}</label>
+                        <div class="config_control">
+                          <div class="xc_radio_group">
+                            <input type="radio" name="sipParentTransferMode" id="sipParentTransferMode0" value="0" {% if 0 == config.sipParentServer.sipTransferMode %}checked="checked"{% endif %}>
+                            <label for="sipParentTransferMode0" class="xc_radio_option">UDP</label>
+                            <input type="radio" name="sipParentTransferMode" id="sipParentTransferMode1" value="1" {% if 1 == config.sipParentServer.sipTransferMode %}checked="checked"{% endif %}>
+                            <label for="sipParentTransferMode1" class="xc_radio_option">TCP</label>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="config_form_group">
+                        <label class="config_label">{{ T.syscfg_data_protocol|default:'数据传输协议' }}</label>
+                        <div class="config_control">
+                          <div class="xc_radio_group">
+                            <input type="radio" name="parentRtpTransferMode" id="parentRtpTransferMode0" value="0" {% if 0 == config.sipParentServer.rtpTransferMode %}checked="checked"{% endif %}>
+                            <label for="parentRtpTransferMode0" class="xc_radio_option">{{ T.syscfg_udp_passive|default:'UDP被动' }}</label>
+                            <input type="radio" name="parentRtpTransferMode" id="parentRtpTransferMode1" value="1" {% if 1 == config.sipParentServer.rtpTransferMode %}checked="checked"{% endif %}>
+                            <label for="parentRtpTransferMode1" class="xc_radio_option">{{ T.syscfg_tcp_passive|default:'TCP被动' }}</label>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="config_form_group">
+                        <label class="config_label">{{ T.syscfg_audio_type|default:'音频传输类型' }}</label>
+                        <div class="config_control">
+                          <div class="xc_radio_group">
+                            <input type="radio" name="parentRtpTransferAudioType" id="parentRtpTransferAudioType0" value="0" {% if 0 == config.sipParentServer.rtpTransferAudioType %}checked="checked"{% endif %}>
+                            <label for="parentRtpTransferAudioType0" class="xc_radio_option">{{ T.audio_pull_mute|default:'静音' }}</label>
+                            <input type="radio" name="parentRtpTransferAudioType" id="parentRtpTransferAudioType1" value="1" {% if 1 == config.sipParentServer.rtpTransferAudioType %}checked="checked"{% endif %}>
+                            <label for="parentRtpTransferAudioType1" class="xc_radio_option">{{ T.audio_pull_original|default:'原始音频' }}</label>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="config_form_group">
+                        <label class="config_label">{{ T.syscfg_heartbeat_interval|default:'心跳间隔(秒)' }}</label>
+                        <div class="config_control">
+                          <input type="number" name="cascadeHeartbeatInterval" value="{{config.sipParentServer.heartbeatInterval}}" class="config_input config_input_small">
+                        </div>
+                      </div>
+
+                      <div class="config_form_group">
+                        <label class="config_label">{{ T.syscfg_register_expiry|default:'注册有效期(秒)' }}</label>
+                        <div class="config_control">
+                          <input type="number" name="registerExpiry" value="{{config.sipParentServer.registerExpiry}}" class="config_input config_input_small">
+                        </div>
+                      </div>
+
+                      <div class="config_form_group">
+                        <label class="config_label">{{ T.syscfg_register_retry_interval|default:'重连间隔(秒)' }}</label>
+                        <div class="config_control">
+                          <input type="number" name="registerRetryInterval" value="{{config.sipParentServer.registerRetryInterval}}" class="config_input config_input_small">
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -752,7 +883,7 @@
                       <div class="config_form_group">
                         <label class="config_label">{{ T.syscfg_cluster_token|default:'认证Token' }}</label>
                         <div class="config_control">
-                          <input type="text" name="clusterToken" value="{{config.clusterServer.token}}" class="config_input">
+                          <input type="password" name="clusterToken" value="{{config.clusterServer.token}}" class="config_input">
                         </div>
                       </div>
 
@@ -993,6 +1124,7 @@
         let ele_sipServerPass = $("input[name='sipServerPass']");
         let ele_rtpTransferMode = $("input[type=radio][name='rtpTransferMode']:checked");
         let eleRtpTransferAudioType = $("input[type=radio][name='rtpTransferAudioType']:checked");
+        let eleAutoInviteAfterRecCateLog = $("input[type=checkbox][name='autoInviteAfterRecCateLog']");
 
         let sipServerIp = ele_sipServerIp.val();
         let sipServerPort = parseInt(ele_sipServerPort.val());
@@ -1002,6 +1134,38 @@
         let sipServerPass = ele_sipServerPass.val();
         let rtpTransferMode = parseInt(ele_rtpTransferMode.val());
         let rtpTransferAudioType = parseInt(eleRtpTransferAudioType.val());
+        let autoInviteAfterRecCateLog = eleAutoInviteAfterRecCateLog.is(':checked') ? 1 : 0;
+
+        // sipParentServer (GB28181级联)
+        let eleCascadeEnable = $("input[type=checkbox][name='cascadeEnable']");
+        let eleSipParentServerIp = $("input[name='sipParentServerIp']");
+        let eleSipParentServerPort = $("input[name='sipParentServerPort']");
+        let eleSipLocalPort = $("input[name='sipLocalPort']");
+        let eleSipParentTransferMode = $("input[type=radio][name='sipParentTransferMode']:checked");
+        let eleSipParentServerId = $("input[name='sipParentServerId']");
+        let eleSipParentServerRealm = $("input[name='sipParentServerRealm']");
+        let eleSipParentServerPass = $("input[name='sipParentServerPass']");
+        let eleSipLocalId = $("input[name='sipLocalId']");
+        let eleParentRtpTransferMode = $("input[type=radio][name='parentRtpTransferMode']:checked");
+        let eleParentRtpTransferAudioType = $("input[type=radio][name='parentRtpTransferAudioType']:checked");
+        let eleCascadeHeartbeatInterval = $("input[name='cascadeHeartbeatInterval']");
+        let eleRegisterExpiry = $("input[name='registerExpiry']");
+        let eleRegisterRetryInterval = $("input[name='registerRetryInterval']");
+
+        let cascadeEnable = eleCascadeEnable.is(':checked') ? 1 : 0;
+        let sipParentServerIp = eleSipParentServerIp.val().trim();
+        let sipParentServerPort = parseInt(eleSipParentServerPort.val());
+        let sipLocalPort = parseInt(eleSipLocalPort.val());
+        let sipParentTransferMode = parseInt(eleSipParentTransferMode.val());
+        let sipParentServerId = eleSipParentServerId.val();
+        let sipParentServerRealm = eleSipParentServerRealm.val();
+        let sipParentServerPass = eleSipParentServerPass.val();
+        let sipLocalId = eleSipLocalId.val();
+        let parentRtpTransferMode = parseInt(eleParentRtpTransferMode.val());
+        let parentRtpTransferAudioType = parseInt(eleParentRtpTransferAudioType.val());
+        let cascadeHeartbeatInterval = parseInt(eleCascadeHeartbeatInterval.val());
+        let registerExpiry = parseInt(eleRegisterExpiry.val());
+        let registerRetryInterval = parseInt(eleRegisterRetryInterval.val());
 
         // clusterServer
         let eleClusterEnable = $("input[type=checkbox][name='clusterEnable']");
@@ -1054,6 +1218,23 @@
                "sipServerPass":sipServerPass,
                "rtpTransferMode":rtpTransferMode,
                "rtpTransferAudioType":rtpTransferAudioType,
+               "autoInviteAfterRecCateLog":autoInviteAfterRecCateLog,
+
+               //sipParentServer (GB28181级联)
+               "cascadeEnable":cascadeEnable,
+               "sipParentServerIp":sipParentServerIp,
+               "sipParentServerPort":sipParentServerPort,
+               "sipLocalPort":sipLocalPort,
+               "sipParentTransferMode":sipParentTransferMode,
+               "sipParentServerId":sipParentServerId,
+               "sipParentServerRealm":sipParentServerRealm,
+               "sipParentServerPass":sipParentServerPass,
+               "sipLocalId":sipLocalId,
+               "parentRtpTransferMode":parentRtpTransferMode,
+               "parentRtpTransferAudioType":parentRtpTransferAudioType,
+               "cascadeHeartbeatInterval":cascadeHeartbeatInterval,
+               "registerExpiry":registerExpiry,
+               "registerRetryInterval":registerRetryInterval,
 
                //clusterServer
                "clusterEnable":clusterEnable,

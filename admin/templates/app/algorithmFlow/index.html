@@ -386,8 +386,8 @@
                                 <button class="xc_btn-modern xc_btn-secondary" onclick="openAddFlowModal()">
                                     <i class="fa fa-plus"></i> {{ T.flow_add|default:'添加' }}
                                 </button>
-                                <button class="xc_btn-modern xc_btn-secondary" data-toggle="modal" data-target="#ImportFileDialog">
-                                    <i class="fa fa-download"></i> {{ T.flow_import|default:'导入' }}
+                                <button class="xc_btn-modern xc_btn-secondary" onclick="openFlowImportModal()">
+                                    <i class="fa fa-upload"></i> {{ T.flow_import|default:'导入' }}
                                 </button>
                                 <button class="xc_btn-modern xc_btn-secondary" onclick="window.location.reload()">
                                     <i class="fa fa-refresh"></i> {{ T.flow_refresh|default:'刷新' }}
@@ -474,41 +474,215 @@
     </div>
 
     <!--导入业务算法弹窗 start -->
-    <div id="ImportFileDialog" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
+    <style>
+    .xc_flow_import-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+    }
+    .xc_flow_import-overlay.active {
+        display: flex;
+    }
+    .xc_flow_import-container {
+        width: 90%;
+        max-width: 480px;
+        background: white;
+        border-radius: 6px;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        animation: xc_flowImportSlideIn 0.3s ease;
+    }
+    @keyframes xc_flowImportSlideIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .xc_flow_import-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 16px;
+        border-bottom: 1px solid #e5e7eb;
+        background: #fafafa;
+        border-radius: 6px 6px 0 0;
+    }
+    .xc_flow_import-title {
+        font-size: 14px;
+        font-weight: 500;
+        color: #374151;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .xc_flow_import-title i {
+        color: #3b82f6;
+        font-size: 14px;
+    }
+    .xc_flow_import-close {
+        width: 26px;
+        height: 26px;
+        border: none;
+        background: white;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        color: #6b7280;
+        font-size: 16px;
+    }
+    .xc_flow_import-close:hover {
+        background: #f3f4f6;
+        color: #374151;
+    }
+    .xc_flow_import-body {
+        flex: 1;
+        padding: 16px;
+    }
+    .xc_flow_import-footer {
+        padding: 8px 16px;
+        border-top: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        background: #fafafa;
+        border-radius: 0 0 6px 6px;
+    }
+    .xc_flow_import-form-group {
+        margin-bottom: 14px;
+    }
+    .xc_flow_import-form-label {
+        display: block;
+        font-size: 13px;
+        color: #606266;
+        margin-bottom: 6px;
+        font-weight: 500;
+    }
+    .xc_flow_import-file-wrapper {
+        position: relative;
+        border: 2px dashed #d1d5db;
+        border-radius: 6px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: #fafbfc;
+    }
+    .xc_flow_import-file-wrapper:hover {
+        border-color: #3b82f6;
+        background: #f0f7ff;
+    }
+    .xc_flow_import-file-wrapper i {
+        font-size: 28px;
+        color: #9ca3af;
+        margin-bottom: 8px;
+    }
+    .xc_flow_import-file-wrapper p {
+        font-size: 13px;
+        color: #6b7280;
+        margin: 0;
+    }
+    .xc_flow_import-file-wrapper .xc_flow_import-file-name {
+        font-size: 12px;
+        color: #3b82f6;
+        margin-top: 6px;
+        font-weight: 500;
+    }
+    .xc_flow_import-file-input {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
+    .xc_flow_import-tips {
+        font-size: 12px;
+        color: #909399;
+        margin-top: 6px;
+    }
+    .xc_flow_import-btn {
+        padding: 5px 14px;
+        font-size: 13px;
+        border-radius: 4px;
+        border: 1px solid;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .xc_flow_import-btn-default {
+        background: white;
+        color: #6b7280;
+        border-color: #d1d5db;
+    }
+    .xc_flow_import-btn-default:hover {
+        background: #f9fafb;
+        color: #374151;
+        border-color: #9ca3af;
+    }
+    .xc_flow_import-btn-primary {
+        background: #3b82f6;
+        color: white;
+        border-color: #3b82f6;
+    }
+    .xc_flow_import-btn-primary:hover {
+        background: #2563eb;
+        border-color: #2563eb;
+    }
+    .xc_flow_import-btn-primary:disabled {
+        background: #93c5fd;
+        border-color: #93c5fd;
+        cursor: not-allowed;
+    }
+    </style>
 
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4 class="modal-title" >{{ T.flow_import_title|default:'导入业务算法' }}</h4>
-          </div>
-          <div class="modal-body">
-            <div style="padding: 5px 20px;">
-              <form class="form-horizontal calender" role="form">
-
-                <div class="form-group">
-                  <label class="col-sm-3 control-label">{{ T.flow_import_file_label|default:'导入文件' }}</label>
-                  <div class="col-sm-9">
-                    <input type="file" class="form-control" accept=".xcflow" name="file"  >
-                  </div>
+    <div class="xc_flow_import-overlay" id="flow_import_modal">
+        <div class="xc_flow_import-container">
+            <div class="xc_flow_import-header">
+                <div class="xc_flow_import-title">
+                    <i class="fa fa-upload"></i>
+                    <span>{{ T.flow_import_title|default:'导入业务算法' }}</span>
                 </div>
-                  <!--
-                <div class="form-group">
-                  <label class="col-sm-3 control-label">{{ T.flow_import_remark_label|default:'导入备注' }}</label>
-                  <div class="col-sm-9">
-                    <textarea class="form-control" style="height:55px;" name="import_remark"></textarea>
-                  </div>
-                </div>
-                  -->
-              </form>
+                <button class="xc_flow_import-close" onclick="closeFlowImportModal()">
+                    <i class="fa fa-times"></i>
+                </button>
             </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">{{ T.flow_cancel|default:'取消' }}</button>
-            <button type="button" onclick="f_openImport()" class="btn btn-dark">{{ T.flow_submit|default:'提交' }}</button>
-          </div>
+            
+            <div class="xc_flow_import-body">
+                <div class="xc_flow_import-form-group">
+                    <label class="xc_flow_import-form-label">{{ T.flow_import_file_label|default:'导入文件' }}<span style="color: #f56c6c; margin-left: 2px;">*</span></label>
+                    <div class="xc_flow_import-file-wrapper" id="flow_file_dropzone">
+                        <i class="fa fa-file-archive-o"></i>
+                        <p>{{ T.flow_select_file|default:'请选择配置文件！' }}</p>
+                        <div class="xc_flow_import-file-name" id="flow_selected_filename"></div>
+                        <input type="file" id="flow_file_input" class="xc_flow_import-file-input" accept=".xcflow">
+                    </div>
+                    <div class="xc_flow_import-tips">{{ T.flow_file_too_large|default:'上传文件大小不能超过 200M！' }}</div>
+                </div>
+            </div>
+            
+            <div class="xc_flow_import-footer">
+                <button type="button" class="xc_flow_import-btn xc_flow_import-btn-default" onclick="closeFlowImportModal()">
+                    {{ T.flow_cancel|default:'取消' }}
+                </button>
+                <button type="button" id="flow_import_submit_btn" class="xc_flow_import-btn xc_flow_import-btn-primary" onclick="f_doFlowImport()">
+                    <i class="fa fa-check" id="flow_import_submit_icon"></i>
+                    <i class="fa fa-spinner fa-spin" id="flow_import_submit_spinner" style="display:none;"></i>
+                    <span id="flow_import_submit_text">{{ T.flow_submit|default:'提交' }}</span>
+                </button>
+            </div>
         </div>
-      </div>
     </div>
     <!--导入业务算法弹窗 end -->
     
@@ -529,10 +703,28 @@
 <script>
     let ele_top_loading = $("#top_loading");
     let ele_top_msg= $("#top_msg");
-    let eleFile = $("input[name='file']");
+    let eleFlowFile = $("#flow_file_input");
     let eleSearchInput = $("#searchInput");
     let eleResetBtn = $("#resetBtn");
-    //let eleTextareaImportRemark= $("textarea[name='import_remark']");
+    
+    // 打开导入弹窗
+    function openFlowImportModal() {
+        document.getElementById('flow_import_modal').classList.add('active');
+    }
+    
+    // 关闭导入弹窗
+    function closeFlowImportModal() {
+        document.getElementById('flow_import_modal').classList.remove('active');
+        // 清空表单
+        document.getElementById('flow_file_input').value = '';
+        document.getElementById('flow_selected_filename').textContent = '';
+    }
+    
+    // 文件选择显示
+    eleFlowFile.on('change', function() {
+        const fileName = this.files[0] ? this.files[0].name : '';
+        document.getElementById('flow_selected_filename').textContent = fileName;
+    });
     
     // 搜索功能
     function doSearch() {
@@ -616,12 +808,11 @@
         });
 
     }
-    function f_openImport() {
+    function f_doFlowImport() {
         //导入业务算法
-        if (eleFile[0].files.length > 0){
-          let file = eleFile[0].files[0];
-           //let importRemark = eleTextareaImportRemark.val().trim();
-
+        if (eleFlowFile[0].files.length > 0){
+          let file = eleFlowFile[0].files[0];
+           
           let fs_name = file.name;
           let fs_size = file.size;//文件字节大小
           let fs_size_m = parseInt(fs_size / 1024 / 1024); //换算成M单位
@@ -629,7 +820,17 @@
           if (fs_size_m <= 200){
                 let formData = new FormData();
                 formData.append('file',file)
-                //formData.append('importRemark',importRemark)
+
+                // Disable button and show spinner
+                const btn = document.getElementById('flow_import_submit_btn');
+                const icon = document.getElementById('flow_import_submit_icon');
+                const spinner = document.getElementById('flow_import_submit_spinner');
+                const text = document.getElementById('flow_import_submit_text');
+                
+                btn.disabled = true;
+                icon.style.display = 'none';
+                spinner.style.display = 'inline-block';
+                text.textContent = _t("flow_submit_ing", "提交中...");
 
                 $.ajax({
                   url:'/algorithmFlow/openImport',
@@ -641,19 +842,27 @@
                   dataType: "json",
                   timeout: 0,
                   error: function () {
+                    // Reset button state
+                    btn.disabled = false;
+                    icon.style.display = 'inline-block';
+                    spinner.style.display = 'none';
+                    text.textContent = _t("flow_submit", "提交");
+                    
                     myToast2025(_t("flow_net_error", "网络异常，请确定网络正常！"),"error");
                   },
                   success: function (res) {
+                    // Reset button state
+                    btn.disabled = false;
+                    icon.style.display = 'inline-block';
+                    spinner.style.display = 'none';
+                    text.textContent = _t("flow_submit", "提交");
+                    
                     if (1000 === res.code) {
-                        myToast2025(res.msg,"success");
-                        // data-toggle="modal" data-target="#ImportFileDialog"
-                        //$("#ImportFileDialog").modal("show");
-                        $("#ImportFileDialog").modal("hide");
-                          myToast2025(res.msg,"success",1000);
-                           setTimeout(function () {
-                              window.location.reload();
-                           }, 1000);
-
+                        myToast2025(res.msg,"success",1000);
+                        closeFlowImportModal();
+                        setTimeout(function () {
+                           window.location.reload();
+                        }, 1000);
                     }else{
                         myToast2025(res.msg,"error");
                     }

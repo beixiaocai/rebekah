@@ -782,7 +782,11 @@
             </button>
             
             <button class="xc_btn-modern" onclick="openImportModal()">
-                <i class="fa fa-upload"></i> {{ T.camera_batch_import|default:'批量导入' }}
+                <i class="fa fa-upload"></i> {{ T.flow_import|default:'导入' }}
+            </button>
+            
+            <button class="xc_btn-modern" onclick="f_exportAllStreams()">
+                <i class="fa fa-download"></i> {{ T.flow_export|default:'导出' }}
             </button>
             
             <!-- 更多按钮和子弹框 -->
@@ -1336,6 +1340,11 @@
         // 清空表单
         document.getElementById('import_file_input').value = '';
         document.getElementById('import_remark_input').value = '';
+    }
+    
+    // 导出所有摄像头
+    function f_exportAllStreams() {
+        window.location.href = '/stream/openExportFile';
     }
     function f_openHandleStreamProxy(handle,code,pull_stream_type){
 

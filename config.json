@@ -46,9 +46,26 @@
         "sipServerRealm": "3402000000",
         "sipServerPass": "123456",
         "sipServerTimeout": 1800,
-        "sipServerExpiry": 120,
+        "sipServerExpiry": 3600,
         "rtpTransferMode": 0,
-        "rtpTransferAudioType": 0
+        "rtpTransferAudioType": 0,
+        "autoInviteAfterRecCateLog": true
+    },
+	"sipParentServer": {
+        "enable": false,
+        "sipServerIp": "127.0.0.1",
+        "sipServerPort": 15060,
+        "sipLocalPort": 5060,
+        "sipTransferMode": 0,
+        "sipServerId": "34020000002000000001",
+        "sipServerRealm": "3402000000",
+        "sipServerPass": "123456",
+        "sipLocalId": "34020000002020000001",
+        "rtpTransferMode": 0,
+        "rtpTransferAudioType": 0,
+        "heartbeatInterval": 60,
+        "registerExpiry": 3600,
+        "registerRetryInterval": 30
     },
     "clusterServer": {
         "enable": false,
