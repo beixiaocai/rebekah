@@ -668,7 +668,7 @@
                         <div class="xc_flow_import-file-name" id="flow_selected_filename"></div>
                         <input type="file" id="flow_file_input" class="xc_flow_import-file-input" accept=".xcflow">
                     </div>
-                    <div class="xc_flow_import-tips">{{ T.flow_file_too_large|default:'上传文件大小不能超过 200M！' }}</div>
+                    <div class="xc_flow_import-tips">{{ T.flow_file_too_large|default:'上传文件大小不能超过 1000M！' }}</div>
                 </div>
             </div>
             
@@ -817,7 +817,7 @@
           let fs_size = file.size;//文件字节大小
           let fs_size_m = parseInt(fs_size / 1024 / 1024); //换算成M单位
 
-          if (fs_size_m <= 200){
+          if (fs_size_m <= 1000){
                 let formData = new FormData();
                 formData.append('file',file)
 
@@ -869,7 +869,7 @@
                   }
                 });
           }else{
-               myToast2025(_t("flow_file_too_large", "上传文件大小不能超过 200M！"),"error");
+               myToast2025(_t("flow_file_too_large", "上传文件大小不能超过 1000M！"),"error");
           }
         }else{
             myToast2025(_t("flow_no_file_selected", "未选择上传文件！"),"error");

@@ -594,7 +594,7 @@
     "flow_submit": "Submit",
     "flow_submit_ing": "Submitting...",
     "flow_select_file": "Please select config file!",
-    "flow_file_too_large": "Upload file size cannot exceed 200M!",
+    "flow_file_too_large": "Upload file size cannot exceed 1000M!",
     "flow_no_file_selected": "No file selected!",
     "flow_secondary_detect": "Secondary Detection",
     "flow_m3_classify_bg": "Classification Calculate Background",

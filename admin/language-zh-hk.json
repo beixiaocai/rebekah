@@ -594,7 +594,7 @@
     "flow_submit": "提交",
     "flow_submit_ing": "提交中...",
     "flow_select_file": "請選擇配置文件！",
-    "flow_file_too_large": "上傳文件大小不能超過 200M！",
+    "flow_file_too_large": "上傳文件大小不能超過 1000M！",
     "flow_no_file_selected": "未選擇上傳文件！",
     "flow_secondary_detect": "二次檢測",
     "flow_m3_classify_bg": "分類是否計算背景",

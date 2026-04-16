@@ -594,7 +594,7 @@
     "flow_submit": "제출",
     "flow_submit_ing": "제출 중...",
     "flow_select_file": "구성 파일을 선택하세요!",
-    "flow_file_too_large": "업로드 파일 크기는 200M를 초과할 수 없습니다!",
+    "flow_file_too_large": "업로드 파일 크기는 1000M를 초과할 수 없습니다!",
     "flow_no_file_selected": "선택된 파일이 없습니다!",
     "flow_secondary_detect": "2차 감지",
     "flow_m3_classify_bg": "분류 배경 계산",

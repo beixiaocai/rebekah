@@ -590,7 +590,7 @@
     "flow_submit": "提交",
     "flow_submit_ing": "提交中...",
     "flow_select_file": "请选择配置文件！",
-    "flow_file_too_large": "上传文件大小不能超过 200M！",
+    "flow_file_too_large": "上传文件大小不能超过 1000M！",
     "flow_no_file_selected": "未选择上传文件！",
     "flow_secondary_detect": "二次检测",
     "flow_m3_classify_bg": "分类是否计算背景",

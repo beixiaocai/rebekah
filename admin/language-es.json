@@ -594,7 +594,7 @@
     "flow_submit": "Enviar",
     "flow_submit_ing": "Enviando...",
     "flow_select_file": "¡Por favor seleccione archivo de configuración!",
-    "flow_file_too_large": "¡El tamaño del archivo no puede exceder 200M!",
+    "flow_file_too_large": "¡El tamaño del archivo no puede exceder 1000M!",
     "flow_no_file_selected": "¡No se seleccionó archivo!",
     "flow_secondary_detect": "Detección Secundaria",
     "flow_m3_classify_bg": "Clasificación Calcular Fondo",

@@ -594,7 +594,7 @@
     "flow_submit": "Отправить",
     "flow_submit_ing": "Отправка...",
     "flow_select_file": "Выберите файл конфигурации!",
-    "flow_file_too_large": "Размер файла не может превышать 200M!",
+    "flow_file_too_large": "Размер файла не может превышать 1000M!",
     "flow_no_file_selected": "Файл не выбран!",
     "flow_secondary_detect": "Вторичное обнаружение",
     "flow_m3_classify_bg": "Классификация вычислять фон",
