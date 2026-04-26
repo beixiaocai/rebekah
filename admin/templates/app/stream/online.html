@@ -6,32 +6,121 @@
   {{ block.super }}
 <style>
     .xc_btn-common {
-        height: 30px;
-        padding: 0 12px;
-        font-size: 12px;
+        height: 32px;
+        padding: 0 14px;
+        font-size: 13px;
         border-radius: 6px;
-        border: 1px solid #E5E6EB;
-        background: #FFFFFF;
-        color: #4E5969;
+        border: 1px solid #e2e8f0;
+        background: #ffffff;
+        color: #475569;
         cursor: pointer;
         transition: all 0.2s;
         display: inline-flex;
         align-items: center;
-        gap: 4px;
+        gap: 6px;
         line-height: 1;
         box-sizing: border-box;
         vertical-align: middle;
     }
-    
+
     .xc_btn-common:hover {
-        background: #F2F3F5;
-        border-color: #C9CDD4;
-        transform: translateY(1px);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        background: #f8fafc;
+        border-color: #3b82f6;
+        color: #3b82f6;
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
     }
-    
+
     .xc_btn-common:active {
         transform: translateY(0);
+    }
+
+    /* 表格精致化 */
+    .table {
+        border-collapse: separate;
+        border-spacing: 0;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .table thead th {
+        background: #f8fafc;
+        color: #475569;
+        font-weight: 600;
+        font-size: 13px;
+        border-bottom: 1px solid #e2e8f0;
+        border-top: none;
+        padding: 10px 12px;
+    }
+
+    .table tbody td {
+        padding: 10px 12px;
+        font-size: 13px;
+        color: #334155;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+    }
+
+    .table tbody tr:hover {
+        background-color: rgba(59, 130, 246, 0.03);
+    }
+
+    .table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .table-bordered {
+        border: 1px solid #e2e8f0;
+    }
+
+    .table-bordered > thead > tr > th,
+    .table-bordered > tbody > tr > td {
+        border: none;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .table-bordered > thead > tr > th {
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    /* 在线状态标签 */
+    .sun-state-success {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 8px;
+        background: rgba(16, 185, 129, 0.08);
+        color: #059669;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    /* 链接统一 */
+    .sun-a-label {
+        color: #3b82f6;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .sun-a-label:hover {
+        color: #2563eb;
+        text-decoration: underline;
+    }
+
+    /* 空状态 */
+    .even.pointer td[colspan] {
+        text-align: center;
+        padding: 60px 20px;
+        color: #94a3b8;
+        font-size: 14px;
+    }
+
+    /* 标题区域 */
+    .x_title h2 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1e293b;
     }
 </style>
 {% endblock stylesheets %}

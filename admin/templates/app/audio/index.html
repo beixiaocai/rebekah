@@ -13,49 +13,48 @@
         background: white;
         border-radius: 10px;
         padding: 20px 24px;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        border: 1px solid #e2e8f0;
         margin-bottom: 16px;
     }
-    
+
     .xc_page-header {
         display: flex;
         justify-content: flex-start !important;
         align-items: center;
-        padding: 8px 0;
-        margin-bottom: 16px;
-        min-height: 40px;
-        gap: 16px;
+        padding: 0 0 16px;
+        margin-bottom: 4px;
+        min-height: 32px;
+        gap: 10px;
         flex-wrap: wrap;
     }
-    
+
     .xc_page-title {
         display: flex;
         align-items: center;
-        font-size: 22px;
-        font-weight: 600;
+        font-size: 18px;
+        font-weight: 500;
         flex-shrink: 0;
-        color: #1f2937;
+        color: #0f172a;
     }
-    
+
     .xc_page-title i {
-        margin-right: 10px;
-        font-size: 20px;
+        margin-right: 8px;
+        font-size: 14px;
         color: #3b82f6;
     }
-    
+
     .xc_header-right {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
         flex-wrap: nowrap;
-        height: 36px;
     }
-    
+
     .xc_header-actions {
         display: flex;
         align-items: center;
-        gap: 8px;
-        height: 36px;
+        gap: 6px;
     }
     
     .xc_loading-spinner {
@@ -80,13 +79,13 @@
     }
     
     .xc_btn-modern {
-        padding: 0 16px;
-        font-size: 14px;
-        font-weight: 500;
+        padding: 0 14px;
+        font-size: 13px;
+        font-weight: 400;
         border-radius: 6px;
-        border: 1px solid #d1d5db;
+        border: 1px solid #e2e8f0;
         background: white;
-        color: #374151;
+        color: #475569;
         cursor: pointer;
         transition: all 0.2s;
         display: inline-flex;
@@ -95,41 +94,39 @@
         gap: 6px;
         white-space: nowrap;
         text-decoration: none;
-        height: 36px;
+        height: 34px;
         line-height: 1;
         box-sizing: border-box;
     }
-    
+
     .xc_btn-modern:hover {
-        background: #f9fafb;
-        border-color: #3b82f6;
-        color: #3b82f6;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #1e293b;
     }
-    
+
     .xc_btn-secondary {
         background: white;
-        color: #6b7280;
-        border: 1px solid #e5e7eb;
+        color: #64748b;
+        border: 1px solid #e2e8f0;
     }
-    
+
     .xc_btn-secondary:hover {
-        background: #f9fafb;
-        color: #374151;
-        border-color: #9ca3af;
+        background: #f8fafc;
+        color: #334155;
+        border-color: #94a3b8;
     }
-    
+
     .xc_btn-primary {
         background: white;
         color: #169F85;
-        border-color: #169F85;
+        border-color: #e2e8f0;
     }
-    
+
     .xc_btn-primary:hover {
-        background: #f0fdfa;
-        border-color: #14b89a;
-        color: #14b89a;
+        background: #f0fdf4;
+        border-color: #cbd5e1;
+        color: #15803d;
     }
 
     .xc_audio-player-compact {
@@ -167,208 +164,195 @@
     
     .xc_table-container {
         overflow-x: auto;
-        border-radius: 10px;
-        border: 1px solid #e5e7eb;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        border-radius: 8px;
     }
-    
+
     .xc_table {
         width: 100%;
-        border-collapse: collapse;
-        font-size: 14px;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 13px;
     }
-    
+
     .xc_table-header {
-        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-        border-bottom: 2px solid #e2e8f0;
+        background: #fff;
+        border-bottom: 1px solid #e2e8f0;
     }
-    
+
     .xc_table-header th {
-        padding: 14px 16px;
+        padding: 12px 16px;
         text-align: left;
-        font-weight: 600;
-        color: #334155;
-        font-size: 14px;
+        font-weight: 500;
+        color: #64748b;
+        font-size: 12px;
         white-space: nowrap;
         text-transform: none;
         letter-spacing: 0.3px;
     }
-    
+
     .xc_table-body tr {
         border-bottom: 1px solid #f1f5f9;
-        transition: all 0.2s;
+        transition: background 0.15s;
     }
-    
+
     .xc_table-body tr:last-child {
         border-bottom: none;
     }
-    
+
     .xc_table-body tr:hover {
-        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        background: #f8fafc;
     }
-    
+
     .xc_table-body td {
         padding: 14px 16px;
-        color: #374151;
+        color: #334155;
         vertical-align: middle;
-        font-size: 14px;
+        font-size: 13px;
     }
-    
+
     .xc_audio-id {
         display: inline-block;
-        padding: 4px 10px;
-        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-        border: 1px solid #cbd5e1;
-        border-radius: 6px;
-        font-size: 13px;
-        color: #475569;
-        font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+        padding: 2px 6px;
+        background: #f8fafc;
+        border-radius: 4px;
+        font-size: 12px;
+        color: #94a3b8;
+        font-family: 'Courier New', monospace;
         font-weight: 500;
     }
-    
+
     .xc_audio-code {
-        font-size: 11px;
-        color: #6b7280;
+        font-size: 12px;
+        color: #94a3b8;
         font-family: 'Courier New', monospace;
     }
-    
+
     .xc_audio-name {
         font-weight: 500;
-        color: #1f2937;
+        color: #0f172a;
         display: flex;
         align-items: center;
         gap: 8px;
         font-size: 14px;
     }
-    
+
     .xc_audio-icon {
         color: #169F85;
-        font-size: 16px;
-    }
-    
-    .xc_audio-remark {
-        color: #6b7280;
         font-size: 14px;
+    }
+
+    .xc_audio-remark {
+        color: #94a3b8;
+        font-size: 13px;
         max-width: 300px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
     }
-    
+
     .xc_time-text {
-        color: #64748b;
+        color: #94a3b8;
         font-size: 13px;
         font-weight: 400;
     }
-    
+
     .xc_action-group {
         display: flex;
-        gap: 6px;
+        gap: 4px;
         align-items: center;
     }
-    
+
     .xc_btn-action {
-        padding: 6px 12px;
-        font-size: 13px;
+        padding: 4px 10px;
+        font-size: 12px;
         border-radius: 6px;
-        border: 1px solid #e5e7eb;
+        border: 1px solid #e2e8f0;
         background: white;
-        color: #6b7280;
+        color: #64748b;
         cursor: pointer;
         transition: all 0.2s;
         display: inline-flex;
         align-items: center;
         gap: 4px;
         white-space: nowrap;
-        font-weight: 500;
+        font-weight: 400;
     }
-    
+
     .xc_btn-action:hover {
-        background: #f0f9ff;
-        border-color: #3b82f6;
-        color: #3b82f6;
-        transform: translateY(-1px);
-        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #334155;
     }
-    
+
     .xc_btn-action.delete:hover {
         background: #fef2f2;
-        border-color: #ef4444;
-        color: #ef4444;
-        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15);
+        border-color: #fca5a5;
+        color: #dc2626;
     }
     
     .xc_pagination {
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 10px;
+        gap: 4px;
         padding: 20px 0;
-        background: white;
-        border-radius: 10px;
     }
-    
+
     .xc_page-btn {
-        min-width: 40px;
-        height: 40px;
-        padding: 0 14px;
+        min-width: 32px;
+        height: 32px;
+        padding: 0 8px;
         display: flex;
         align-items: center;
         justify-content: center;
-        border: 1px solid #e5e7eb;
-        background: white;
-        color: #6b7280;
-        border-radius: 8px;
+        border: 1px solid transparent;
+        background: transparent;
+        color: #64748b;
+        border-radius: 6px;
         cursor: pointer;
-        font-size: 14px;
-        font-weight: 500;
+        font-size: 13px;
         transition: all 0.2s;
         text-decoration: none;
     }
-    
+
     .xc_page-btn:hover:not(.active) {
-        border-color: #3b82f6;
-        color: #3b82f6;
-        transform: translateY(-1px);
-        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+        background: #f1f5f9;
+        color: #334155;
     }
-    
+
     .xc_page-btn.active {
-        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-        color: white;
-        border-color: #3b82f6;
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-    }
-    
-    .xc_page-info {
-        font-size: 14px;
-        color: #64748b;
-        margin: 0 12px;
+        background: #eff6ff;
+        color: #2563eb;
         font-weight: 500;
     }
-    
+
+    .xc_page-info {
+        font-size: 13px;
+        color: #94a3b8;
+        margin: 0 12px;
+    }
+
     .xc_empty-state {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         text-align: center;
-        padding: 100px 20px;
-        min-height: 400px;
-        color: #9ca3af;
+        padding: 80px 20px;
+        min-height: 300px;
+        color: #94a3b8;
     }
-    
+
     .xc_empty-state i {
-        font-size: 80px;
-        color: #d1d5db;
-        margin-bottom: 20px;
-        opacity: 0.5;
+        font-size: 64px;
+        color: #e2e8f0;
+        margin-bottom: 16px;
     }
-    
+
     .xc_empty-state p {
-        font-size: 16px;
+        font-size: 14px;
         margin: 0;
-        color: #6b7280;
+        color: #94a3b8;
     }
     
     .right_col {
@@ -404,13 +388,13 @@
         left: 50%;
         transform: translate(-50%, -50%);
         background: white;
-        border-radius: 12px;
+        border-radius: 10px;
         width: 90%;
         max-width: 550px;
         max-height: 85vh;
         display: flex;
         flex-direction: column;
-        box-shadow: 0 25px 80px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
         animation: xc_slideIn 0.3s ease;
     }
     
@@ -426,66 +410,66 @@
     }
     
     .xc_modal-header {
-        padding: 18px 24px;
-        border-bottom: 1px solid #e5e7eb;
-        background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
-        border-radius: 12px 12px 0 0;
+        padding: 14px 18px;
+        border-bottom: 1px solid #e2e8f0;
+        background: #fafafa;
+        border-radius: 10px 10px 0 0;
         position: relative;
     }
-    
+
     .xc_modal-title {
-        font-size: 18px;
-        font-weight: 600;
-        color: #1f2937;
+        font-size: 16px;
+        font-weight: 500;
+        color: #374151;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
     }
-    
+
     .xc_modal-title i {
         color: #3b82f6;
-        font-size: 18px;
+        font-size: 14px;
     }
-    
+
     .xc_modal-close {
         position: absolute;
-        top: 14px;
-        right: 20px;
-        width: 32px;
-        height: 32px;
+        top: 12px;
+        right: 16px;
+        width: 30px;
+        height: 30px;
         border: none;
-        background: #f1f5f9;
-        color: #64748b;
-        font-size: 22px;
+        background: white;
+        color: #6b7280;
+        font-size: 20px;
         line-height: 1;
         cursor: pointer;
         padding: 0;
-        border-radius: 6px;
+        border-radius: 4px;
+        border: 1px solid #e2e8f0;
         transition: all 0.2s;
     }
-    
+
     .xc_modal-close:hover {
-        background: #e2e8f0;
-        color: #334155;
-        transform: rotate(90deg);
+        background: #f3f4f6;
+        color: #374151;
     }
     
     .xc_modal-body {
         flex: 1;
-        padding: 24px;
+        padding: 18px 20px;
         overflow-y: auto;
     }
-    
+
     .xc_form-group {
-        margin-bottom: 18px;
+        margin-bottom: 14px;
     }
-    
+
     .xc_form-label {
         display: block;
-        font-size: 14px;
-        font-weight: 600;
+        font-size: 13px;
+        font-weight: 500;
         color: #374151;
-        margin-bottom: 8px;
+        margin-bottom: 6px;
     }
     
     .xc_form-label .required {
@@ -495,57 +479,57 @@
     
     .xc_form-input {
         width: 100%;
-        padding: 10px 14px;
-        font-size: 14px;
-        border: 1px solid #d1d5db;
-        border-radius: 8px;
+        padding: 8px 12px;
+        font-size: 13px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
         transition: all 0.2s;
-        height: 42px;
+        height: 36px;
         box-sizing: border-box;
     }
-    
+
     .xc_form-input:focus {
         outline: none;
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        border-color: #cbd5e1;
+        box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.1);
     }
-    
+
     .xc_form-input:disabled {
         background: #f8fafc;
-        color: #9ca3af;
+        color: #94a3b8;
         cursor: not-allowed;
     }
-    
+
     .xc_form-file {
         padding: 0 12px;
-        font-size: 14px;
+        font-size: 13px;
         cursor: pointer;
         display: flex;
         align-items: center;
-        height: 42px;
-        line-height: 42px;
-        border: 1px solid #d1d5db;
-        border-radius: 8px;
-        box-sizing: border-box;
-    }
-    
-    .xc_form-file::file-selector-button {
-        padding: 6px 14px;
-        margin-right: 12px;
-        font-size: 13px;
-        color: #374151;
-        background: #f1f5f9;
+        height: 36px;
+        line-height: 36px;
         border: 1px solid #e2e8f0;
         border-radius: 6px;
+        box-sizing: border-box;
+    }
+
+    .xc_form-file::file-selector-button {
+        padding: 4px 12px;
+        margin-right: 10px;
+        font-size: 12px;
+        color: #475569;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 4px;
         cursor: pointer;
         transition: all 0.2s;
         line-height: 1.3;
     }
-    
+
     .xc_form-file::file-selector-button:hover {
-        background: #e8f4f1;
-        border-color: #10b981;
-        color: #059669;
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+        color: #334155;
     }
     
     .xc_form-help {
@@ -555,44 +539,44 @@
     }
     
     .xc_modal-footer {
-        padding: 16px 24px;
-        border-top: 1px solid #e5e7eb;
+        padding: 12px 18px;
+        border-top: 1px solid #e2e8f0;
         text-align: right;
-        background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
-        border-radius: 0 0 12px 12px;
+        background: #fafafa;
+        border-radius: 0 0 10px 10px;
     }
-    
+
     .xc_modal-btn {
-        padding: 10px 24px;
-        font-size: 14px;
-        border-radius: 8px;
-        border: none;
+        padding: 7px 18px;
+        font-size: 13px;
+        border-radius: 6px;
+        border: 1px solid #e2e8f0;
         cursor: pointer;
-        margin-left: 12px;
+        margin-left: 10px;
         transition: all 0.2s;
-        font-weight: 600;
+        font-weight: 400;
     }
-    
+
     .xc_modal-btn-cancel {
-        background: #f1f5f9;
+        background: white;
         color: #64748b;
     }
-    
+
     .xc_modal-btn-cancel:hover {
-        background: #e2e8f0;
+        background: #f8fafc;
+        border-color: #cbd5e1;
         color: #334155;
     }
-    
+
     .xc_modal-btn-submit {
-        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        background: #3b82f6;
         color: white;
-        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        border-color: #3b82f6;
     }
-    
+
     .xc_modal-btn-submit:hover {
-        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-        box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
-        transform: translateY(-1px);
+        background: #2563eb;
+        border-color: #2563eb;
     }
 
     @media (max-width: 1200px) {

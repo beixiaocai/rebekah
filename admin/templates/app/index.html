@@ -15,15 +15,16 @@
       border-radius: 12px;
       padding: 20px;
       margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
       transition: all 0.3s ease;
+      border: 1px solid #e2e8f0;
     }
-    
+
     .modern-card:hover {
-      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      border-color: #cbd5e1;
     }
-    
+
     .modern-card-title {
       display: flex;
       align-items: center;
@@ -44,34 +45,14 @@
       font-size: 16px;
     }
     
-    .icon-cpu {
-      background: rgba(137, 146, 176, 0.15);
-      color: #8892b0;
-    }
-    
-    .icon-memory {
-      background: rgba(137, 146, 176, 0.15);
-      color: #8892b0;
-    }
-    
-    .icon-disk {
-      background: rgba(137, 146, 176, 0.15);
-      color: #8892b0;
-    }
-    
-    .icon-algorithm {
-      background: rgba(137, 146, 176, 0.15);
-      color: #8892b0;
-    }
-    
-    .icon-system {
-      background: rgba(137, 146, 176, 0.15);
-      color: #8892b0;
-    }
-    
+    .icon-cpu,
+    .icon-memory,
+    .icon-disk,
+    .icon-algorithm,
+    .icon-system,
     .icon-auth {
-      background: rgba(137, 146, 176, 0.15);
-      color: #8892b0;
+      background: rgba(59, 130, 246, 0.08);
+      color: #3b82f6;
     }
     
     .chart-container {
@@ -125,7 +106,30 @@
         background: #f0f7ff;
         color: #4a90e2;
     }
-    
+
+    .mini-progress {
+      width: 70px;
+      height: 5px;
+      background: #e5e7eb;
+      border-radius: 3px;
+      overflow: hidden;
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 6px;
+    }
+
+    .mini-progress-bar {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .mini-progress-bar.blue,
+    .mini-progress-bar.purple,
+    .mini-progress-bar.green {
+      background: linear-gradient(90deg, #3b82f6, #60a5fa);
+    }
+
     .right_col {
       background: #f5f7fa !important;
     }
@@ -291,7 +295,7 @@
       <div class="row">
         <!-- CPU利用率 -->
         <div class="col-md-4 col-sm-6 col-xs-12">
-          <div class="modern-card">
+          <div class="modern-card card-cpu">
             <div class="modern-card-title">
               <i class="fa fa-tachometer icon-cpu"></i>
               {{ T.index_cpu_usage|default:'CPU利用率' }}
@@ -302,7 +306,7 @@
         
         <!-- 内存利用率 -->
         <div class="col-md-4 col-sm-6 col-xs-12">
-          <div class="modern-card">
+          <div class="modern-card card-memory">
             <div class="modern-card-title">
               <i class="fa fa-database icon-memory"></i>
               {{ T.index_mem_usage|default:'内存利用率' }}
@@ -313,7 +317,7 @@
         
         <!-- 存储利用率 -->
         <div class="col-md-4 col-sm-6 col-xs-12">
-          <div class="modern-card">
+          <div class="modern-card card-disk">
             <div class="modern-card-title">
               <i class="fa fa-hdd-o icon-disk"></i>
               {{ T.index_disk_usage|default:'存储利用率' }}
@@ -327,7 +331,7 @@
 
         <!-- 视频信息 -->
         <div class="col-md-4 col-sm-6 col-xs-12">
-          <div class="modern-card">
+          <div class="modern-card card-algorithm">
             <div class="modern-card-title">
               <i class="fa fa-cogs icon-algorithm"></i>
               {{ T.index_video_info|default:'视频信息' }}
@@ -344,7 +348,7 @@
         </div>
         <!-- 系统信息 -->
         <div class="col-md-4 col-sm-6 col-xs-12">
-          <div class="modern-card">
+          <div class="modern-card card-system">
             <div class="modern-card-title">
               <i class="fa fa-info-circle icon-system"></i>
               {{ T.index_system_info|default:'系统信息' }}
@@ -369,15 +373,24 @@
                 </tr>
                 <tr>
                   <td>{{ T.index_sys_cpu|default:'CPU' }}</td>
-                  <td id="os_cpu_used_rate">0%</td>
+                  <td>
+                    <span id="os_cpu_used_rate">0%</span>
+                    <div class="mini-progress"><div class="mini-progress-bar blue" id="cpu_mini_bar" style="width:0%"></div></div>
+                  </td>
                 </tr>
                 <tr>
                   <td>{{ T.index_sys_mem|default:'内存' }}</td>
-                  <td id="os_virtual_mem_used_rate">0%</td>
+                  <td>
+                    <span id="os_virtual_mem_used_rate">0%</span>
+                    <div class="mini-progress"><div class="mini-progress-bar purple" id="mem_mini_bar" style="width:0%"></div></div>
+                  </td>
                 </tr>
                 <tr>
-                  <td>{{ T.index_sys_disk|default:'存储' }}</td> 
-                  <td id="os_disk_used_rate">0%</td>
+                  <td>{{ T.index_sys_disk|default:'存储' }}</td>
+                  <td>
+                    <span id="os_disk_used_rate">0%</span>
+                    <div class="mini-progress"><div class="mini-progress-bar green" id="disk_mini_bar" style="width:0%"></div></div>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -386,9 +399,9 @@
 
         <!-- 布控信息 -->
         <div class="col-md-4 col-sm-6 col-xs-12">
-          <div class="modern-card">
+          <div class="modern-card card-auth">
             <div class="modern-card-title">
-              <i class="fa fa-cogs icon-algorithm"></i>
+              <i class="fa fa-shield icon-auth"></i>
               {{ T.index_control_info|default:'布控信息' }}
             </div>
             <table class="info-table" id="control_data">
@@ -566,9 +579,9 @@
     }
     
     // 创建三个图表
-    let cpuCharts = createModernChart('cpuCharts', '{{ T.index_cpu_usage|default:"CPU利用率" }}', '#4a90e2');
-    let memoryCharts = createModernChart('memoryCharts', '{{ T.index_mem_usage|default:"内存利用率" }}', '#4a90e2');
-    let diskCharts = createModernChart('diskCharts', '{{ T.index_disk_usage|default:"存储利用率" }}', '#4a90e2');
+    let cpuCharts = createModernChart('cpuCharts', '{{ T.index_cpu_usage|default:"CPU利用率" }}', '#2563eb');
+    let memoryCharts = createModernChart('memoryCharts', '{{ T.index_mem_usage|default:"内存利用率" }}', '#3b82f6');
+    let diskCharts = createModernChart('diskCharts', '{{ T.index_disk_usage|default:"存储利用率" }}', '#60a5fa');
     
     let eleStreamData = $("#stream_data tbody");
     let eleControlData = $("#control_data tbody");
@@ -619,7 +632,15 @@
               ele_os_cpu_used_rate.html(os_cpu_used_rate_str);
               ele_os_virtual_mem_used_rate.html(os_virtual_mem_used_rate_str);
               ele_os_disk_used_rate.html(os_disk_used_rate_str);
-              
+
+              // 更新迷你进度条
+              let cpuPct = os_cpu_used_rate > 1 ? os_cpu_used_rate : os_cpu_used_rate * 100;
+              let memPct = os_virtual_mem_used_rate > 1 ? os_virtual_mem_used_rate : os_virtual_mem_used_rate * 100;
+              let diskPct = os_disk_used_rate > 1 ? os_disk_used_rate : os_disk_used_rate * 100;
+              $("#cpu_mini_bar").css("width", Math.min(cpuPct, 100) + "%");
+              $("#mem_mini_bar").css("width", Math.min(memPct, 100) + "%");
+              $("#disk_mini_bar").css("width", Math.min(diskPct, 100) + "%");
+
               // 设置图表数据
               let x = (new Date()).getTime();
               cpuCharts.series[0].addPoint([x, os_cpu_used_rate], true, true);

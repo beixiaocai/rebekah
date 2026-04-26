@@ -5,140 +5,134 @@
 {% block stylesheets %}
   {{ block.super }}
 <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
     .xc_container {
-        color: #333;
+        color: #334155;
         line-height: 1.6;
         margin: 0 auto;
-        padding: 10px 20px;
+        padding: 16px 20px;
     }
 
     .xc_toolbar {
         background: white;
-        border-radius: 8px;
-        padding: 12px 16px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        margin-bottom: 20px;
+        border-radius: 10px;
+        padding: 14px 18px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        border: 1px solid #e2e8f0;
+        margin-bottom: 16px;
         display: flex;
         align-items: center;
         gap: 8px;
         flex-wrap: wrap;
     }
-    
+
     .xc_page-title {
         display: flex;
         align-items: center;
-        font-size: 16px;
-        font-weight: 600;
-        color: #1D2129;
-        gap: 6px;
+        font-size: 18px;
+        font-weight: 500;
+        color: #0f172a;
+        gap: 8px;
         white-space: nowrap;
     }
-    
+
     .xc_page-title i {
         margin-right: 0;
-        font-size: 18px;
-        color: #165DFF;
-    }
-    
-    .xc_search-input {
-        width: 180px;
-        min-width: 120px;
-        padding: 0 10px;
         font-size: 14px;
-        border: 1px solid #E5E6EB;
+        color: #3b82f6;
+    }
+
+    .xc_search-input {
+        width: 200px;
+        min-width: 120px;
+        padding: 0 12px;
+        font-size: 13px;
+        border: 1px solid #e2e8f0;
         border-radius: 6px;
         transition: all 0.2s;
         outline: none;
-        height: 36px !important;
-        line-height: 36px;
+        height: 34px !important;
+        line-height: 34px;
         box-sizing: border-box;
         vertical-align: middle;
-        margin-bottom: 5px;
+        margin-bottom: 0;
+        background: #fff;
     }
-    
+
     .xc_search-input:focus {
-        border-color: #165DFF;
-        box-shadow: 0 0 0 3px rgba(22, 93, 255, 0.1);
+        border-color: #cbd5e1;
+        box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.1);
     }
-    
+
     .xc_search-input::placeholder {
-        color: #C9CDD4;
+        color: #94a3b8;
     }
-    
+
     .xc_status-filter {
-        padding: 0 28px 0 10px;
-        font-size: 14px;
-        border: 1px solid #E5E6EB;
+        padding: 0 28px 0 12px;
+        font-size: 13px;
+        border: 1px solid #e2e8f0;
         border-radius: 6px;
         transition: all 0.2s;
         background: white;
-        color: #4E5969;
+        color: #475569;
         cursor: pointer;
         outline: none;
         min-width: 100px;
-        height: 36px !important;
-        line-height: 36px;
+        height: 34px !important;
+        line-height: 34px;
         box-sizing: border-box;
         vertical-align: middle;
         appearance: none;
         -webkit-appearance: none;
         -moz-appearance: none;
-        background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%234E5969" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"%3e%3cpolyline points="6 9 12 15 18 9"%3e%3c/polyline%3e%3c/svg%3e');
+        background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%2364748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"%3e%3cpolyline points="6 9 12 15 18 9"%3e%3c/polyline%3e%3c/svg%3e');
         background-repeat: no-repeat;
         background-position: right 8px center;
         background-size: 12px;
-        margin-bottom: 5px;
+        margin-bottom: 0;
     }
-    
+
     .xc_status-filter:hover {
-        border-color: #165DFF;
+        border-color: #cbd5e1;
     }
-    
+
     .xc_btn-modern {
-        padding: 0 12px;
-        font-size: 14px;
+        padding: 0 14px;
+        font-size: 13px;
         font-weight: 400;
         border-radius: 6px;
-        border: 1px solid #E5E6EB;
-        background: #F2F3F5;
-        color: #4E5969;
+        border: 1px solid #e2e8f0;
+        background: white;
+        color: #475569;
         cursor: pointer;
         transition: all 0.2s;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 4px;
+        gap: 6px;
         white-space: nowrap;
         text-decoration: none;
         flex-shrink: 0;
-        height: 36px;
+        height: 34px;
         line-height: 1;
         box-sizing: border-box;
         vertical-align: middle;
     }
-    
+
     .xc_btn-modern:hover {
-        background: #E5E6EB;
-        border-color: #C9CDD4;
-        transform: translateY(-1px);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #1e293b;
     }
-    
+
     .xc_btn-modern.danger {
-        color: #F53F3F;
+        color: #dc2626;
     }
-    
+
     .xc_btn-modern.danger:hover {
-        background: #FFECE8;
-        border-color: #FFCCC7;
-        color: #D03050;
+        background: #fef2f2;
+        border-color: #fca5a5;
+        color: #b91c1c;
     }
     
     .xc_loading-spinner {
@@ -164,30 +158,32 @@
     .xc_table-container {
         background: white;
         border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         overflow: hidden;
     }
 
     .xc_table {
         width: 100%;
-        border-collapse: collapse;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 13px;
     }
 
     .xc_table th {
-        background: #fafafa;
-        padding: 14px 16px;
+        background: #fff;
+        padding: 12px 16px;
         text-align: left;
-        font-size: 14px;
-        font-weight: 600;
-        color: #374151;
-        border-bottom: 2px solid #e5e7eb;
+        font-size: 12px;
+        font-weight: 500;
+        color: #64748b;
+        border-bottom: 1px solid #e2e8f0;
+        letter-spacing: 0.3px;
     }
 
     .xc_table td {
-        padding: 16px;
-        font-size: 14px;
-        color: #374151;
-        border-bottom: 1px solid #e5e7eb;
+        padding: 14px 16px;
+        font-size: 13px;
+        color: #334155;
+        border-bottom: 1px solid #f1f5f9;
         vertical-align: middle;
     }
 
@@ -196,7 +192,7 @@
     }
 
     .xc_table tr:hover {
-        background: #f9fafb;
+        background: #f8fafc;
     }
 
     .xc_table tr:last-child td {
@@ -205,18 +201,17 @@
 
     .xc_id-badge {
         display: inline-block;
-        padding: 2px 8px;
-        background: #f3f4f6;
-        border: 1px solid #e5e7eb;
+        padding: 2px 6px;
+        background: #f8fafc;
         border-radius: 4px;
-        font-size: 13px;
-        color: #6b7280;
-        font-family: monospace;
+        font-size: 12px;
+        color: #94a3b8;
+        font-family: 'Courier New', monospace;
     }
 
     .xc_code-text {
-        font-size: 11px;
-        color: #6b7280;
+        font-size: 12px;
+        color: #94a3b8;
         font-family: 'Courier New', monospace;
     }
 
@@ -224,45 +219,45 @@
         display: inline-flex;
         align-items: center;
         gap: 4px;
-        padding: 4px 10px;
-        background: #ecfdf5;
-        border-radius: 4px;
-        color: #10b981;
-        font-size: 14px;
+        padding: 3px 10px;
+        background: #f0fdf4;
+        border-radius: 9999px;
+        color: #15803d;
+        font-size: 13px;
         font-weight: 500;
         text-decoration: none;
         transition: all 0.2s;
     }
 
     .xc_stream-link:hover {
-        background: #d1fae5;
+        background: #dcfce7;
         text-decoration: none;
     }
 
     .xc_stream-link.offline {
-        background: #f3f4f6;
-        color: #6b7280;
+        background: #f8fafc;
+        color: #94a3b8;
     }
 
     .xc_stream-link.offline:hover {
-        background: #e5e7eb;
+        background: #f1f5f9;
         text-decoration: none;
     }
 
     .xc_status-badge {
         display: inline-flex;
         align-items: center;
-        gap: 3px;
-        padding: 2px 8px;
-        border-radius: 3px;
+        gap: 4px;
+        padding: 3px 10px;
+        border-radius: 9999px;
         font-size: 12px;
         font-weight: 500;
         white-space: nowrap;
     }
 
     .xc_status-badge.controlled {
-        background: #dcfce7;
-        color: #16a34a;
+        background: #f0fdf4;
+        color: #15803d;
     }
 
     .xc_status-badge.not-controlled {
@@ -293,10 +288,10 @@
         display: inline-flex;
         align-items: center;
         gap: 3px;
-        padding: 2px 8px;
+        padding: 3px 10px;
         background: #eff6ff;
-        border: 1px solid #bfdbfe;
-        border-radius: 3px;
+        border: 1px solid #dbeafe;
+        border-radius: 9999px;
         font-size: 12px;
         color: #2563eb;
         cursor: pointer;
@@ -305,23 +300,23 @@
 
     .xc_algorithm-tag:hover {
         background: #dbeafe;
-        border-color: #3b82f6;
+        border-color: #bfdbfe;
     }
 
     .xc_algorithm-tag i {
-        font-size: 11px;
+        font-size: 10px;
     }
 
     .xc_add-algorithm-btn {
         display: inline-flex;
         align-items: center;
         gap: 3px;
-        padding: 2px 8px;
+        padding: 3px 10px;
         background: white;
-        border: 1px dashed #d1d5db;
-        border-radius: 3px;
+        border: 1px dashed #e2e8f0;
+        border-radius: 9999px;
         font-size: 12px;
-        color: #6b7280;
+        color: #94a3b8;
         cursor: pointer;
         transition: all 0.2s;
     }
@@ -340,24 +335,24 @@
     }
 
     .xc_action-btn {
-        padding: 4px 8px;
+        padding: 4px 10px;
         font-size: 12px;
-        border-radius: 3px;
-        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        border: 1px solid #e2e8f0;
         background: white;
-        color: #374151;
+        color: #475569;
         cursor: pointer;
         transition: all 0.2s;
         display: inline-flex;
         align-items: center;
-        gap: 3px;
+        gap: 4px;
         white-space: nowrap;
     }
 
     .xc_action-btn:hover {
-        background: #f9fafb;
-        border-color: #3b82f6;
-        color: #3b82f6;
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #334155;
     }
 
     .xc_action-btn.primary {
@@ -372,12 +367,12 @@
     }
 
     .xc_action-btn.danger {
-        color: #ef4444;
+        color: #dc2626;
     }
 
     .xc_action-btn.danger:hover {
         background: #fef2f2;
-        border-color: #ef4444;
+        border-color: #fca5a5;
     }
 
     .xc_more_btn {
@@ -389,28 +384,28 @@
     }
 
     .xc_control-btn {
-        padding: 4px 8px;
+        padding: 4px 10px;
         font-size: 12px;
-        border-radius: 3px;
+        border-radius: 6px;
         border: none;
         cursor: pointer;
         transition: all 0.2s;
         display: inline-flex;
         align-items: center;
-        gap: 3px;
+        gap: 4px;
         white-space: nowrap;
     }
 
     .xc_control-btn.start {
         background: white;
-        color: #374151;
-        border: 1px solid #d1d5db;
+        color: #475569;
+        border: 1px solid #e2e8f0;
     }
 
     .xc_control-btn.start:hover {
-        background: #f9fafb;
-        border-color: #3b82f6;
-        color: #3b82f6;
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #334155;
     }
 
     .xc_control-btn.stop {
@@ -425,16 +420,16 @@
     .xc_empty-state {
         text-align: center !important;
         padding: 80px 20px !important;
-        color: #9ca3af !important;
+        color: #94a3b8 !important;
     }
-    
+
     .xc_empty-state i {
         font-size: 64px !important;
-        color: #d1d5db !important;
+        color: #e2e8f0 !important;
         margin-bottom: 16px !important;
         display: block !important;
     }
-    
+
     .xc_empty-state p {
         font-size: 14px !important;
         margin: 0 !important;
@@ -444,38 +439,41 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 10px;
-        padding-top: 10px;
-        padding-bottom: 10px;
+        gap: 4px;
+        padding: 20px 0;
     }
-    
+
     .xc_pagination > .xc_page-btn {
-        min-width: 36px;
-        height: 36px;
+        min-width: 32px;
+        height: 32px;
+        padding: 0 8px;
         border-radius: 6px;
-        border: 1px solid #ddd;
-        background-color: white;
-        color: #555;
+        border: 1px solid transparent;
+        background: transparent;
+        color: #64748b;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
         transition: all 0.2s;
+        font-size: 13px;
     }
-    
+
     .xc_pagination > .xc_page-btn:hover:not(.xc_active) {
-        border-color: #34495e;
-        color: #34495e;
+        background: #f1f5f9;
+        color: #334155;
     }
-    
+
     .xc_pagination > .xc_page-btn.xc_active {
-        background-color: #34495e;
-        color: white;
+        background: #eff6ff;
+        color: #2563eb;
+        font-weight: 500;
     }
-    
+
     .xc_pagination > .xc_page-info {
-        font-size: 14px;
-        color: #7f8c8d;
+        font-size: 13px;
+        color: #94a3b8;
+        margin: 0 12px;
     }
 
     .xc_bullet-dialog {
@@ -485,12 +483,12 @@
         margin-top: 4px;
         background: white;
         border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
         z-index: 10001;
         display: none;
         min-width: 160px;
         overflow: hidden;
-        border: 1px solid #e5e7eb;
+        border: 1px solid #e2e8f0;
     }
 
     .xc_bullet-dialog-btn {
@@ -501,22 +499,23 @@
         background: white;
         border: none;
         text-align: left;
-        font-size: 14px;
+        font-size: 13px;
         cursor: pointer;
         transition: all 0.2s ease;
         white-space: nowrap;
         width: 100%;
+        color: #334155;
     }
 
     .xc_bullet-dialog-btn:hover {
-        background: #f3f4f6;
-        color: #1f2937;
+        background: #f8fafc;
+        color: #0f172a;
     }
 
     .xc_bullet-dialog-btn i {
         width: 16px;
         text-align: center;
-        font-size: 14px;
+        font-size: 13px;
     }
 
     .xc_bullet-dialog-btn-danger {
