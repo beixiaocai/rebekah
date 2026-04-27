@@ -410,7 +410,7 @@
         font-size: 13px;
         border-bottom: 1px solid #e2e8f0;
         position: relative;
-        background: #f8fafc;
+        background: #ffffff;
     }
 
     .xc_camera_table td {
@@ -836,27 +836,31 @@
         position: fixed;
         top: 0;
         left: 0;
-        width: 100%;
-        height: 100%;
+        right: 0;
+        bottom: 0;
         background: rgba(0, 0, 0, 0.5);
         z-index: 9999;
-        align-items: center;
-        justify-content: center;
+        overflow-y: auto;
     }
 
     .xc_import-modal-overlay.active {
         display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 20px 0;
     }
 
     .xc_import-modal-container {
         width: 90%;
-        max-width: 520px;
+        max-width: 750px;
         background: white;
-        border-radius: 6px;
+        border-radius: 8px;
         display: flex;
         flex-direction: column;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
         animation: xc_importModalSlideIn 0.3s ease;
+        margin: auto;
+        max-height: calc(100vh - 40px);
     }
 
     @keyframes xc_importModalSlideIn {
@@ -874,15 +878,15 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 10px 16px;
+        padding: 14px 18px;
         border-bottom: 1px solid #e5e7eb;
         background: #fafafa;
-        border-radius: 6px 6px 0 0;
+        border-radius: 8px 8px 0 0;
     }
 
     .xc_import-modal-title {
-        font-size: 14px;
-        font-weight: 500;
+        font-size: 16px;
+        font-weight: 600;
         color: #374151;
         display: flex;
         align-items: center;
@@ -891,7 +895,7 @@
 
     .xc_import-modal-title i {
         color: #3b82f6;
-        font-size: 14px;
+        font-size: 16px;
     }
 
     .xc_import-modal-close {
@@ -916,16 +920,18 @@
 
     .xc_import-modal-body {
         flex: 1;
-        padding: 10px 16px;
+        overflow-y: auto;
+        padding: 18px 20px;
     }
 
     .xc_import-modal-footer {
-        padding: 8px 16px;
+        padding: 14px 18px;
         border-top: 1px solid #e5e7eb;
         display: flex;
         justify-content: flex-end;
         gap: 8px;
         background: #fafafa;
+        border-radius: 0 0 8px 8px;
     }
 
     .xc_import-form-group {

@@ -585,7 +585,7 @@
     
     .xc_modal-image-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         gap: 8px;
     }
     
@@ -604,7 +604,7 @@
     
     .xc_modal-image-thumb {
         width: 100%;
-        height: 80px;
+        height: 160px;
         object-fit: cover;
     }
     
@@ -1245,7 +1245,7 @@
         // 左侧媒体区域
         html += '<div class="xc_modal-media-section">';
         
-        // 视频
+        // 视频（仅在存在时显示，且限制高度）
         if(alarm.video_count > 0) {
             html += '<div class="xc_modal-video-container">';
             html += '<div class="xc_modal-section-title"><i class="fa fa-video-camera"></i> ' + _t("alarm_video", "报警视频") + '（' + alarm.video_count + '）</div>';
@@ -1253,7 +1253,7 @@
             html += '</div>';
         }
         
-        // 图片
+        // 图片（调大显示）
         html += '<div class="xc_modal-section-title"><i class="fa fa-image"></i> ' + _t("alarm_image", "报警图片") + '（' + alarm.image_count + '）</div>';
         html += '<div class="xc_modal-image-grid">';
         for(let i = 0; i < alarm.imageUrlArray.length; i++) {
