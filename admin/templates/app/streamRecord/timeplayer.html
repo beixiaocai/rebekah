@@ -85,7 +85,7 @@
         z-index: 1;
     }
 
-    /* ===== 二级时间轴：小时内12个切片 ===== */
+    /* ===== 二级时间轴：小时内20个切片 ===== */
     .timeline-segment-container {
         margin-top: 4px;
         width: 100%;
@@ -404,8 +404,8 @@
     let playingSegmentIndex = -1; // 当前播放的切片序号
 
     // 录像切片参数，与后端 RecordWorker.RECORD_SEGMENT_SECOND 保持一致
-    const RECORD_SEGMENT_SECOND = 300;
-    const SEGMENT_PER_HOUR = 12;
+    const RECORD_SEGMENT_SECOND = 180;
+    const SEGMENT_PER_HOUR = 20;
 
     // 监听视频播放结束事件，实现连续播放
     eleVideoPlayerJsObj.addEventListener('ended', function() {

@@ -615,6 +615,7 @@
                     <td>{{ d.id }}</td>
                     <td><span class="xc_record-code">{{ d.code }}</span></td>
                     <td>
+                      <span style="margin-right:8px;font-weight:500;">{{ d.stream_nickname|default:"" }}</span>
                       {% if d.stream_active == 1 %}
                         <span class="xc_stream-status xc_stream-status-active"><span class="xc_stream-status-icon"></span>{{ T.recordplan_online|default:'在线' }}</span><a href="javascript:f_open_player('{{ d.stream_app }}','{{ d.stream_name }}')" class="sun-a-label">{{ T.recordplan_play|default:'播放' }}</a>
                       {% else %}
