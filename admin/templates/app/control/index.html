@@ -1965,6 +1965,12 @@
                         if(context.control.deploy_process_index !== undefined){
                             eleInputDeployProcessIndex.val(context.control.deploy_process_index);
                         }
+                        if(context.control.extend_params !== undefined){
+                            eleTextareaExtendParams.val(context.control.extend_params);
+                        }
+                        if(context.control.osd_params !== undefined){
+                            eleTextareaOsdParams.val(context.control.osd_params);
+                        }
                     }
                     
                     let streamHtml = "<option value=\"0\">" + _t("dashboard_select_stream","请选择视频流") + "</option>";
