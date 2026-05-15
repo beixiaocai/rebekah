@@ -524,6 +524,7 @@
                               <input type="checkbox" name="autoAddStreamProxy" value="1" {% if 1 == config.autoAddStreamProxy %}checked{% endif %}>
                               <span class="xc_switch_slider"></span>
                             </label>
+                            <input type="number" name="autoAddStreamProxySleep" value="{{config.autoAddStreamProxySleep}}" class="config_input" style="width:52px;margin-left:8px;height:26px;padding:2px 3px;font-size:12px;text-align:center;">
                             <span class="xc_switch_label">{{ T.syscfg_auto_proxy_desc|default:'是否开启自动流代理' }}</span>
                           </div>
                         </div>
@@ -539,6 +540,7 @@
                               <input type="checkbox" name="autoStartAllControl" value="1" {% if 1 == config.autoStartAllControl %}checked{% endif %}>
                               <span class="xc_switch_slider"></span>
                             </label>
+                            <input type="number" name="autoStartAllControlSleep" value="{{config.autoStartAllControlSleep}}" class="config_input" style="width:52px;margin-left:8px;height:26px;padding:2px 3px;font-size:12px;text-align:center;">
                             <span class="xc_switch_label">{{ T.syscfg_auto_start_all_control_desc|default:'是否开启自动全部布控' }}</span>
                           </div>
                         </div>
@@ -1070,7 +1072,9 @@
 
         let eleAutoStart = $("input[type=checkbox][name='autoStart']");
         let eleAutoAddStreamProxy = $("input[type=checkbox][name='autoAddStreamProxy']");
+        let eleAutoAddStreamProxySleep = $("input[name='autoAddStreamProxySleep']");
         let eleAutoStartAllControl = $("input[type=checkbox][name='autoStartAllControl']");
+        let eleAutoStartAllControlSleep = $("input[name='autoStartAllControlSleep']");
         let eleIsEnableLoginCaptcha = $("input[type=checkbox][name='isEnableLoginCaptcha']");
         let eleLogDebug = $("input[type=checkbox][name='logDebug']");
         let eleIsEnableDashboardLoginLimit = $("input[type=checkbox][name='isEnableDashboardLoginLimit']");
@@ -1102,7 +1106,9 @@
 
         let autoStart = eleAutoStart.is(':checked') ? 1 : 0;
         let autoAddStreamProxy = eleAutoAddStreamProxy.is(':checked') ? 1 : 0;
+        let autoAddStreamProxySleep = parseInt(eleAutoAddStreamProxySleep.val()) || 15;
         let autoStartAllControl = eleAutoStartAllControl.is(':checked') ? 1 : 0;
+        let autoStartAllControlSleep = parseInt(eleAutoStartAllControlSleep.val()) || 30;
         let isEnableLoginCaptcha = eleIsEnableLoginCaptcha.is(':checked') ? 1 : 0;
         let logDebug = eleLogDebug.is(':checked') ? 1 : 0;
         let isEnableDashboardLoginLimit = eleIsEnableDashboardLoginLimit.is(':checked') ? 1 : 0;
@@ -1196,7 +1202,9 @@
 
                "autoStart":autoStart,
                "autoAddStreamProxy":autoAddStreamProxy,
+               "autoAddStreamProxySleep":autoAddStreamProxySleep,
                "autoStartAllControl":autoStartAllControl,
+               "autoStartAllControlSleep":autoStartAllControlSleep,
                "isEnableLoginCaptcha":isEnableLoginCaptcha,
                "logDebug":logDebug,
                "isEnableDashboardLoginLimit":isEnableDashboardLoginLimit,

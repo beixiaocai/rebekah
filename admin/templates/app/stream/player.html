@@ -492,6 +492,15 @@
                                         <i class="fa fa-copy"></i>
                                     </button>
                                 </li>
+
+                                <li class="xc_protocol_item">
+                                    <span class="xc_protocol_url">{{ stream.rtmpUrl }}</span>
+                                    <span class="xc_copy_tip" id="copyTip4" style="display: none;">{{ T.player_copied|default:'已复制' }}</span>
+                                    <button class="xc_copy_btn" onclick="copyToClipboard('{{ stream.rtmpUrl }}', 'copyTip4')" title="{{ T.player_copy_address|default:'复制地址' }}">
+                                        <i class="fa fa-copy"></i>
+                                    </button>
+                                </li>
+
                             </ul>
                         </section>
                   {% endif %}
