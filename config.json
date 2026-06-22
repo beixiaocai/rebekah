@@ -26,7 +26,6 @@
     "autoStart": false,
 	"autoAddStreamProxySleep": 15,
     "autoAddStreamProxy": true,
-    "autoStartAllControlSleep": 30,
     "autoStartAllControl": false,
     "logDebug": false,
     "isDelStreamRecord": true,
