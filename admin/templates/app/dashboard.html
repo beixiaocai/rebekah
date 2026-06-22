@@ -1984,6 +1984,28 @@
         });
     }
 
+    /* ========== 自动刷新（防止播放器内存泄漏） ========== */
+    (function() {
+        var REFRESH_INTERVAL = 30 * 60 * 1000;  // 30分钟自动刷新
+        var WARN_BEFORE = 30 * 1000;             // 刷新前30秒提示
+        var refreshTimer = null;
+        function scheduleRefresh() {
+            clearTimeout(refreshTimer);
+            refreshTimer = setTimeout(function() {
+                myToast2025(_t('dashboard_auto_refresh_warn', '页面即将自动刷新以释放内存...'), 'warn');
+                setTimeout(function() {
+                    f_openUpdateDashboardData();  // 保存当前布局
+                    location.reload();
+                }, WARN_BEFORE);
+            }, REFRESH_INTERVAL);
+        }
+        scheduleRefresh();
+        // 用户操作时重置计时器（避免操作中途刷新）
+        ['click', 'mousedown', 'keydown'].forEach(function(evt) {
+            document.addEventListener(evt, scheduleRefresh);
+        });
+    })();
+
 </script>
 
 
