@@ -5,6 +5,7 @@
 {% block stylesheets %}
   {{ block.super }}
 <style>
+    /* ========== 通用按钮 ========== */
     .xc_btn-common {
         height: 32px;
         padding: 0 14px;
@@ -22,105 +23,345 @@
         box-sizing: border-box;
         vertical-align: middle;
     }
-
     .xc_btn-common:hover {
         background: #f8fafc;
         border-color: #3b82f6;
         color: #3b82f6;
         box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
     }
+    .xc_btn-common:active { transform: translateY(0); }
 
-    .xc_btn-common:active {
-        transform: translateY(0);
+    /* ========== 工具栏 ========== */
+    .online-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
     }
-
-    /* 表格精致化 */
-    .table {
-        border-collapse: separate;
-        border-spacing: 0;
-        border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        overflow: hidden;
+    .online-toolbar .search-box {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: #fff;
+        border: 1px solid #dcdfe6;
+        border-radius: 6px;
+        padding: 6px 12px;
+        flex: 1;
+        max-width: 280px;
+        height: 32px;
+        box-sizing: border-box;
+        transition: border-color .2s, box-shadow .2s;
     }
-
-    .table thead th {
-        background: #f8fafc;
-        color: #475569;
-        font-weight: 600;
-        font-size: 13px;
-        border-bottom: 1px solid #e2e8f0;
-        border-top: none;
-        padding: 10px 12px;
+    .online-toolbar .search-box:focus-within {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59,130,246,.12);
     }
-
-    .table > tbody > tr > td {
-        padding: 10px 12px;
-        font-size: 13px;
-        color: #334155;
-        border-bottom: 1px solid #f1f5f9;
-        vertical-align: middle;
-    }
-
-    .table tbody tr:hover {
-        background-color: rgba(59, 130, 246, 0.03);
-    }
-
-    .table tbody tr:last-child td {
-        border-bottom: none;
-    }
-
-    .table-bordered {
-        border: 1px solid #e2e8f0;
-    }
-
-    .table-bordered > thead > tr > th,
-    .table-bordered > tbody > tr > td {
+    .online-toolbar .search-box input {
         border: none;
-        border-bottom: 1px solid #f1f5f9;
+        outline: none;
+        font-size: 13px;
+        color: #374151;
+        background: transparent;
+        flex: 1;
+        min-width: 0;
     }
+    .online-toolbar .search-box input::placeholder { color: #9ca3af; }
+    .online-toolbar .search-box .search-icon { color: #9ca3af; font-size: 13px; }
 
-    .table-bordered > thead > tr > th {
-        border-bottom: 1px solid #e2e8f0;
+    .online-toolbar .stat-pills {
+        display: flex;
+        gap: 8px;
+        margin-left: auto;
     }
-
-    /* 在线状态标签 */
-    .sun-state-success {
+    .online-toolbar .stat-pill {
+        padding: 4px 12px;
+        border-radius: 14px;
+        font-size: 12px;
+        font-weight: 500;
+        background: #f1f5f9;
+        color: #64748b;
         display: inline-flex;
         align-items: center;
         gap: 4px;
-        padding: 2px 8px;
-        background: rgba(16, 185, 129, 0.08);
-        color: #059669;
-        border-radius: 4px;
-        font-size: 12px;
+    }
+    .online-toolbar .stat-pill .pill-num {
+        color: #3b82f6;
+        font-weight: 700;
+        margin-left: 2px;
+        min-width: 16px;
+        text-align: center;
+    }
+
+    /* ========== 卡片网格 ========== */
+    .online-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 12px;
+        padding-bottom: 20px;
+    }
+
+    /* ========== 卡片 ========== */
+    .online-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: box-shadow .2s, border-color .2s, transform .2s;
+    }
+    .online-card:hover {
+        box-shadow: 0 4px 14px rgba(15, 23, 42, .08);
+        border-color: #cbd5e1;
+        transform: translateY(-1px);
+    }
+
+    /* ========== 封面区 ========== */
+    .online-cover {
+        position: relative;
+        width: 100%;
+        height: 135px;
+        background: #0f172a;
+        overflow: hidden;
+        cursor: pointer;
+    }
+    .online-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+    .online-cover .cover-placeholder {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: rgba(255,255,255,.4);
+        gap: 6px;
+    }
+    .online-cover .cover-placeholder .ph-icon {
+        font-size: 26px;
+    }
+    .online-cover .cover-placeholder .ph-text {
+        font-size: 11px;
+    }
+    .online-cover .cover-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,.45);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        opacity: 0;
+        transition: opacity .2s;
+    }
+    .online-cover:hover .cover-overlay { opacity: 1; }
+    .online-cover .cover-overlay .overlay-btn {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: rgba(59, 130, 246, .92);
+        color: #fff;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,.35);
+        cursor: pointer;
+        transition: background .2s, transform .2s;
+        border: none;
+    }
+    .online-cover .cover-overlay .overlay-btn:hover {
+        background: rgba(37, 99, 235, 1);
+        transform: scale(1.08);
+    }
+    .online-cover .cover-overlay .overlay-btn.snap-btn {
+        background: rgba(15, 23, 42, .78);
+    }
+    .online-cover .cover-overlay .overlay-btn.snap-btn:hover {
+        background: rgba(15, 23, 42, .95);
+    }
+    .online-cover .cover-status {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        display: flex;
+        gap: 4px;
+        z-index: 2;
+    }
+    .online-cover .cover-status .badge {
+        padding: 2px 7px;
+        font-size: 10px;
+        border-radius: 3px;
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        background: rgba(16, 185, 129, .88);
+        color: #fff;
+        backdrop-filter: blur(2px);
         font-weight: 500;
     }
+    .online-cover .cover-status .status-dot {
+        width: 6px; height: 6px;
+        background: #fff;
+        border-radius: 50%;
+        box-shadow: 0 0 4px #fff;
+        animation: pulse 1.6s ease-in-out infinite;
+    }
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: .5; }
+    }
+    .online-cover .cover-snap-loading {
+        position: absolute;
+        inset: 0;
+        background: rgba(15, 23, 42, .6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 12px;
+        gap: 8px;
+        z-index: 3;
+    }
+    .online-cover .cover-snap-loading .spin {
+        width: 14px; height: 14px;
+        border: 2px solid rgba(255,255,255,.3);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* 链接统一 */
-    .sun-a-label {
-        color: #3b82f6;
+    /* ========== 信息区 ========== */
+    .online-info {
+        padding: 8px 10px 6px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+    .online-name {
+        font-size: 13px;
+        font-weight: 600;
+        color: #1e293b;
+        line-height: 1.3;
+    }
+    .online-name a {
+        color: #1e293b;
         text-decoration: none;
-        transition: color 0.2s;
+        transition: color .2s;
     }
-
-    .sun-a-label:hover {
-        color: #2563eb;
-        text-decoration: underline;
+    .online-name a:hover { color: #3b82f6; }
+    .online-name .name-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        max-width: 100%;
+        vertical-align: middle;
     }
-
-    /* 空状态 */
-    .even.pointer td[colspan] {
-        text-align: center;
-        padding: 60px 20px;
+    .online-id {
+        font-size: 11px;
         color: #94a3b8;
-        font-size: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-family: 'Consolas', 'Courier New', monospace;
+        line-height: 1.3;
+    }
+    .online-fields {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3px 10px;
+        padding: 5px 0 2px;
+        border-top: 1px dashed #e2e8f0;
+        margin-top: 2px;
+    }
+    .online-field {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        min-width: 0;
+        line-height: 1.35;
+    }
+    .online-field .f-label {
+        font-size: 10px;
+        color: #94a3b8;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+    .online-field .f-value {
+        font-size: 11px;
+        color: #475569;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-weight: 500;
+        min-width: 0;
     }
 
-    /* 标题区域 */
+    /* ========== 加载/空状态 ========== */
+    .online-loading {
+        grid-column: 1 / -1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 50px 20px;
+        color: #94a3b8;
+        font-size: 13px;
+        gap: 10px;
+    }
+    .online-loading .spin {
+        width: 16px; height: 16px;
+        border: 2px solid #e2e8f0;
+        border-top-color: #3b82f6;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    /* 空状态（参考 stream/index 页面） */
+    .xc_empty-state {
+        grid-column: 1 / -1;
+        text-align: center !important;
+        padding: 70px 20px !important;
+        color: #9ca3af !important;
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .xc_empty-state i {
+        font-size: 56px !important;
+        color: #d1d5db !important;
+        margin-bottom: 14px !important;
+        display: block !important;
+    }
+    .xc_empty-state p {
+        font-size: 14px !important;
+        margin: 0 !important;
+        display: block !important;
+    }
+
+    /* ========== 标题区 ========== */
     .x_title h2 {
         font-size: 16px;
         font-weight: 600;
         color: #1e293b;
+    }
+    #top_loading {
+        font-size: 12px;
+        color: #64748b;
+        font-weight: 400;
+        margin-left: 8px;
+    }
+    #top_loading img {
+        vertical-align: middle;
+        margin-right: 4px;
     }
 </style>
 {% endblock stylesheets %}
@@ -135,37 +376,28 @@
       <div class="x_panel">
         <div class="x_title">
           <h2>{{ T.online_preview|default:'在线预览' }}
-            <span id="top_loading" ><img class="top_loading_img" src="/static/images/load.gif" alt="loading">{{ T.common_loading|default:'加载中' }}</span>
-                <button style="margin-left:10px;"  type="button" onclick="f_reload()"  class="xc_btn-common"><i class="fa fa-refresh"></i> {{ T.online_refresh|default:'刷新' }}</button>
-            <span id="top_msg"></span>
+            <span id="top_loading" style="display:none;"><img class="top_loading_img" src="/static/images/load.gif" alt="loading">{{ T.common_loading|default:'加载中' }}</span>
           </h2>
-
           <div class="clearfix"></div>
         </div>
 
         <div class="x_content">
-        <!--<p><code>msg</code></p>-->
-
-          <div class="table-responsive">
-            <table class="table table-bordered">
-              <thead>
-                <tr class="headings">
-                  <th class="column-title">{{ T.online_serial_number|default:'序号' }} </th>
-                    <th class="column-title">{{ T.online_relate_camera|default:'关联摄像头' }} </th>
-
-                  <th class="column-title">{{ T.online_play|default:'播放' }} </th>
-
-                  <th class="column-title">{{ T.online_users|default:'在线人数' }} </th>
-                  <th class="column-title">{{ T.online_in_bandwidth|default:'入口带宽' }} </th>
-                  <th class="column-title">{{ T.online_video_info|default:'视频信息' }} </th>
-                  <th class="column-title last">{{ T.online_audio_info|default:'音频信息' }} </th>
-                </tr>
-              </thead>
-              <tbody id="data">
-              </tbody>
-            </table>
+          <!-- 工具栏 -->
+          <div class="online-toolbar">
+            <div class="search-box">
+              <span class="search-icon"><i class="fa fa-search"></i></span>
+              <input type="text" id="searchInput" placeholder="{{ T.online_search_placeholder|default:'搜索摄像头名称...' }}" oninput="f_filterCards()">
+            </div>
+            <button type="button" onclick="f_reload()" class="xc_btn-common"><i class="fa fa-refresh"></i> {{ T.online_refresh|default:'刷新' }}</button>
+            <div class="stat-pills">
+              <span class="stat-pill"><i class="fa fa-circle" style="color:#10b981;font-size:8px;"></i>{{ T.online_is_online|default:'在线' }}<span class="pill-num" id="onlineCount">--</span></span>
+            </div>
           </div>
 
+          <!-- 卡片网格 -->
+          <div id="onlineGrid" class="online-grid">
+            <div class="online-loading"><div class="spin"></div>{{ T.common_loading|default:'加载中' }}</div>
+          </div>
 
         </div>
       </div>
@@ -183,79 +415,207 @@
 
 <script>
     let eleTopLoading = $("#top_loading");
-    let eleTopMsg= $("#top_msg");
-    let eleData = $("#data");
-    
+    let eleGrid = $("#onlineGrid");
+    let eleOnlineCount = $("#onlineCount");
+    let g_streamData = [];
+
     function f_reload(){
         window.location.reload();
     }
+
     function f_open_stream(code) {
-        let url = "/stream/index?code="+code;
+        let url = "/stream/index?code=" + code;
         window.location.href = url;
     }
-    function f_open_player(stream_app,stream_name){
-        window.open("/stream/player?app="+stream_app+"&name="+stream_name);
+
+    function f_open_player(stream_app, stream_name) {
+        window.open("/stream/player?app=" + encodeURIComponent(stream_app) + "&name=" + encodeURIComponent(stream_name));
     }
+
+    function f_escapeHtml(str) {
+        if (str === null || str === undefined) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
     function f_getAllStreamData() {
         eleTopLoading.show();
         $.ajax({
-               url: '/open/getAllStreamData',
-               type: "get",
-               async: true,
-               data: {"handle":"online"},
-               dataType: "json",
-               timeout: 0,
-               error: function () {
-                   eleTopLoading.hide();
-                   myToast2025(_t("online_net_error", "网络异常，请确定网络正常！"), "error");
-               },
-               success: function (res) {
-                   eleTopLoading.hide();
-
-                    eleData.html("");
-
-                   if(1000 === res.code){
-                       let item_html;
-
-                       let data = res.data;
-                       let data_length = data.length;
-
-                       if(0===data_length){
-                           item_html = "";
-                          item_html += "<tr class=\"even pointer\"><td colspan='7'>" + _t("online_no_data", "暂无数据") + "</td></tr>";
-                           eleData.append(item_html);
-                       }else{
-                            for (let i = 0; i < data_length; i++) {
-                                 item_html = "";
-                               let d = data[i];
-                               item_html += "<tr class=\"even pointer\">";
-                               item_html += "<td>"+String(i+1)+"</td>";
-                                item_html += "<td><a class='sun-a-label'  href=\"javascript:f_open_stream('"+d["code"]+"')\" >"+d["nickname"]+"</a></td>";
-                                item_html += "<td><span class='sun-state-success'><i class=\"fa fa-bar-chart\"></i> " + _t("online_is_online", "在线") + "</span> <a class='sun-a-label' href=\"javascript:f_open_player('"+d["app"]+"','"+d["name"]+"')\" ><i class=\"fa fa-play\"></i> "+d["app"]+"/"+d["name"]+"</a></td>";
-                               item_html += "<td>"+d["clients"]+"</td>";
-                               item_html += "<td>"+d["produce_speed"]+"</td>";
-                               item_html += "<td>"+d["video"]+"</td>";
-                               item_html += "<td>"+d["audio"]+"</td>";
-                               item_html += "</tr>";
-
-                               eleData.append(item_html);
-                           }
-                        }
-                        //setTimeout(function () {f_getAllStreamData();}, 6000);
-
-                   }else{
-                        //eleTopMsg.html(res.msg);
-                        myToast2025(res.msg,"error");
-                   }
-               }
-            });
-
+            url: '/open/getAllStreamData',
+            type: "get",
+            async: true,
+            data: {"handle": "online"},
+            dataType: "json",
+            timeout: 0,
+            error: function () {
+                eleTopLoading.hide();
+                myToast2025(_t("online_net_error", "网络异常，请确定网络正常！"), "error");
+            },
+            success: function (res) {
+                eleTopLoading.hide();
+                if (1000 === res.code) {
+                    let data = res.data || [];
+                    g_streamData = data;
+                    eleOnlineCount.text(data.length);
+                    f_renderCards(data);
+                } else {
+                    myToast2025(res.msg, "error");
+                }
+            }
+        });
     }
-    window.onload = function (){
+
+    function f_renderCards(streams) {
+        eleGrid.empty();
+
+        if (!streams || streams.length === 0) {
+            eleGrid.html(
+                '<div class="xc_empty-state">' +
+                '<i class="fa fa-video-camera"></i>' +
+                '<p>' + _t("camera_no_data", "暂无数据") + '</p>' +
+                '</div>'
+            );
+            return;
+        }
+
+        let html = '';
+        for (let i = 0; i < streams.length; i++) {
+            let d = streams[i];
+            let nickname = f_escapeHtml(d["nickname"] || d["name"] || '');
+            let code = f_escapeHtml(d["code"] || '');
+            let app = d["app"] || '';
+            let streamName = d["name"] || '';
+            let appEsc = f_escapeHtml(app);
+            let nameEsc = f_escapeHtml(streamName);
+            let clients = d["clients"] || 0;
+            let produceSpeed = f_escapeHtml(d["produce_speed"] || '--');
+            let videoInfo = f_escapeHtml(d["video"] || _t("online_value_none", "无"));
+            let audioInfo = f_escapeHtml(d["audio"] || _t("online_value_none", "无"));
+
+            // 截图URL: /storage/openAccess?filename=snapshots/{app}-{name}.jpg
+            let snapFilename = 'snapshots/' + encodeURIComponent(app) + '-' + encodeURIComponent(streamName) + '.jpg';
+            let snapUrl = '/storage/openAccess?filename=' + snapFilename;
+            let cardId = 'card_' + i;
+            let imgId = 'snap_' + i;
+            let phId = 'ph_' + i;
+            let loadId = 'snapload_' + i;
+
+            html += '<div class="online-card" data-name="' + nickname.toLowerCase() + '" id="' + cardId + '">';
+            // 封面
+            html += '<div class="online-cover" onclick="f_open_player(\'' + appEsc.replace(/'/g, "\\'") + '\', \'' + nameEsc.replace(/'/g, "\\'") + '\')">';
+            html += '  <img id="' + imgId + '" src="' + snapUrl + '" alt="" style="display:none;" onload="f_onSnapLoad(\'' + imgId + '\',\'' + phId + '\')" onerror="f_onSnapError(\'' + imgId + '\',\'' + phId + '\')">';
+            html += '  <div class="cover-placeholder" id="' + phId + '">';
+            html += '    <span class="ph-icon"><i class="fa fa-video-camera"></i></span>';
+            html += '    <span class="ph-text">' + _t("online_no_snapshot", "暂无截图") + '</span>';
+            html += '  </div>';
+            html += '  <div class="cover-snap-loading" id="' + loadId + '"><div class="spin"></div>' + _t("online_snapshotting", "截图中...") + '</div>';
+            html += '  <div class="cover-overlay">';
+            html += '    <button class="overlay-btn" title="' + _t("online_play", "播放") + '" onclick="event.stopPropagation();f_open_player(\'' + appEsc.replace(/'/g, "\\'") + '\', \'' + nameEsc.replace(/'/g, "\\'") + '\')"><i class="fa fa-play"></i></button>';
+            html += '    <button class="overlay-btn snap-btn" title="' + _t("online_take_snapshot", "截图") + '" onclick="event.stopPropagation();f_takeSnapshot(\'' + appEsc.replace(/'/g, "\\'") + '\',\'' + nameEsc.replace(/'/g, "\\'") + '\',\'' + imgId + '\',\'' + phId + '\',\'' + loadId + '\')"><i class="fa fa-camera"></i></button>';
+            html += '  </div>';
+            html += '  <div class="cover-status">';
+            html += '    <span class="badge"><span class="status-dot"></span>' + _t("online_is_online", "在线") + '</span>';
+            html += '  </div>';
+            html += '</div>';
+            // 信息
+            html += '<div class="online-info">';
+            html += '  <div class="online-name"><a href="javascript:f_open_stream(\'' + code.replace(/'/g, "\\'") + '\')" title="' + nickname + '"><span class="name-text">' + nickname + '</span></a></div>';
+            html += '  <div class="online-id" title="' + appEsc + '/' + nameEsc + '">' + appEsc + '/' + nameEsc + '</div>';
+            html += '  <div class="online-fields">';
+            html += '    <div class="online-field"><span class="f-label">' + _t("online_users", "在线人数") + '</span><span class="f-value">' + clients + '</span></div>';
+            html += '    <div class="online-field"><span class="f-label">' + _t("online_in_bandwidth", "入口带宽") + '</span><span class="f-value">' + produceSpeed + '</span></div>';
+            html += '    <div class="online-field"><span class="f-label">' + _t("online_video_info", "视频") + '</span><span class="f-value" title="' + videoInfo + '">' + videoInfo + '</span></div>';
+            html += '    <div class="online-field"><span class="f-label">' + _t("online_audio_info", "音频") + '</span><span class="f-value" title="' + audioInfo + '">' + audioInfo + '</span></div>';
+            html += '  </div>';
+            html += '</div>';
+            html += '</div>';
+        }
+
+        eleGrid.html(html);
+        // 重新应用筛选
+        f_filterCards();
+    }
+
+    function f_onSnapLoad(imgId, phId) {
+        let img = document.getElementById(imgId);
+        let ph = document.getElementById(phId);
+        if (img) img.style.display = 'block';
+        if (ph) ph.style.display = 'none';
+    }
+
+    function f_onSnapError(imgId, phId) {
+        let img = document.getElementById(imgId);
+        let ph = document.getElementById(phId);
+        if (img) img.style.display = 'none';
+        if (ph) ph.style.display = 'flex';
+    }
+
+    function f_takeSnapshot(app, name, imgId, phId, loadId) {
+        let loadEl = document.getElementById(loadId);
+        if (loadEl) loadEl.style.display = 'flex';
+
+        $.ajax({
+            url: '/nvr/openAutoSnapShot',
+            type: "post",
+            data: {"app": app, "name": name},
+            dataType: "json",
+            timeout: 30000,
+            success: function (res) {
+                if (loadEl) loadEl.style.display = 'none';
+                if (1000 === res.code) {
+                    myToast2025(_t("online_snapshot_success", "截图成功"), "success");
+                    // 刷新图片（加时间戳防止缓存）
+                    let img = document.getElementById(imgId);
+                    if (img) {
+                        let snapFilename = 'snapshots/' + encodeURIComponent(app) + '-' + encodeURIComponent(name) + '.jpg';
+                        img.src = '/storage/openAccess?filename=' + snapFilename + '&_t=' + Date.now();
+                    }
+                } else {
+                    myToast2025(res.msg || _t("online_snapshot_failed", "截图失败"), "error");
+                }
+            },
+            error: function () {
+                if (loadEl) loadEl.style.display = 'none';
+                myToast2025(_t("online_net_error", "网络异常，请确定网络正常！"), "error");
+            }
+        });
+    }
+
+    function f_filterCards() {
+        let q = $("#searchInput").val().toLowerCase().trim();
+        let visibleCount = 0;
+        $(".online-card").each(function () {
+            let name = $(this).attr("data-name") || '';
+            if (q === '' || name.indexOf(q) !== -1) {
+                $(this).show();
+                visibleCount++;
+            } else {
+                $(this).hide();
+            }
+        });
+
+        // 移除已有的"无搜索结果"提示
+        $("#onlineEmptySearch").remove();
+
+        // 搜索无结果时显示提示
+        if (q !== '' && visibleCount === 0) {
+            eleGrid.append(
+                '<div class="xc_empty-state" id="onlineEmptySearch">' +
+                '<i class="fa fa-search"></i>' +
+                '<p>' + _t("camera_no_data", "暂无数据") + '</p>' +
+                '</div>'
+            );
+        }
+    }
+
+    $(function () {
         f_getAllStreamData();
-    };
-
-
+        // 每 60 秒自动刷新一次列表
+        setInterval(f_getAllStreamData, 60000);
+    });
 </script>
 {% endblock javascripts %}
-

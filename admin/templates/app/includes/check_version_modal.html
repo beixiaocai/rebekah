@@ -1,0 +1,186 @@
+{% comment %}
+  通用版本检测弹窗模块（v5.201新增）
+  引用方式：{% include "app/includes/check_version_modal.html" %}
+  自动行为：页面加载后自动调用 /version/openCheckVersion 检测新版本，发现新版本则弹窗提示
+  特性：不依赖 Bootstrap modal，纯 CSS+JS 实现，适配所有页面（含 dashboard.html 等独立页面）
+{% endcomment %}
+
+<!-- 版本检测弹窗 -->
+<div id="checkVersionDialog" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:99999;align-items:center;justify-content:center;">
+  <div id="checkVersionDialogBox" style="background:#fff;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.15);max-width:600px;width:90%;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;">
+    <div style="background:#fafafa;border-bottom:1px solid #e5e7eb;border-radius:8px 8px 0 0;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;">
+      <h4 style="margin:0;font-size:16px;font-weight:700;color:#374151;display:flex;align-items:center;line-height:1.5;">
+        <span style="margin-right:6px;font-size:16px;">🚀</span>{{ T.index_new_version|default:'发现新版本' }}
+      </h4>
+      <button type="button" onclick="f_closeCheckVersionDialog()" style="background:none;border:none;color:#6b7280;opacity:0.7;font-size:22px;font-weight:300;cursor:pointer;padding:0;line-height:1;">×</button>
+    </div>
+    <div style="padding:18px 20px;background:white;overflow-y:auto;">
+      <div id="checkVersionContent"></div>
+    </div>
+    <div style="background:#fafafa;border-top:1px solid #e5e7eb;border-radius:0 0 8px 8px;padding:12px 18px;display:flex;justify-content:flex-end;gap:8px;">
+      <button type="button" onclick="f_closeCheckVersionDialog()" style="background:white;border:1px solid #d1d5db;color:#6b7280;border-radius:4px;padding:6px 14px;font-size:13px;font-weight:500;cursor:pointer;">{{ T.index_cancel|default:'取消' }}</button>
+      <button type="button" onclick="f_downloadNewVersion()" style="background:#4a90e2;border:none;color:white;border-radius:4px;padding:6px 14px;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:4px;">
+        <i class="fa fa-download"></i> {{ T.index_download_version|default:'下载新版本' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  #checkVersionDialog .version-info-card {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 16px;
+  }
+  #checkVersionDialog .version-info-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  #checkVersionDialog .version-number {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    background: #4a90e2;
+    color: white;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  #checkVersionDialog .version-number i {
+    margin-right: 4px;
+    font-size: 11px;
+  }
+  #checkVersionDialog .version-date {
+    font-size: 11px;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+  }
+  #checkVersionDialog .version-date i {
+    margin-right: 3px;
+    font-size: 11px;
+  }
+  #checkVersionDialog .version-content {
+    margin: 0;
+    padding-left: 18px;
+  }
+  #checkVersionDialog .version-content li {
+    padding: 4px 0;
+    font-size: 13px;
+    color: #374151;
+    line-height: 1.6;
+  }
+</style>
+
+<script>
+  (function () {
+    // 避免重复初始化（多个 include 时仅执行一次）
+    if (window.__checkVersionModalInited) return;
+    window.__checkVersionModalInited = true;
+
+    let downloadNewVersionUrl = "";
+
+    window.f_downloadNewVersion = function () {
+      window.open(downloadNewVersionUrl);
+    };
+
+    window.f_closeCheckVersionDialog = function () {
+      var dlg = document.getElementById("checkVersionDialog");
+      if (dlg) dlg.style.display = "none";
+    };
+
+    // 点击遮罩层关闭弹窗
+    document.addEventListener("DOMContentLoaded", function () {
+      var dlg = document.getElementById("checkVersionDialog");
+      if (dlg) {
+        dlg.addEventListener("click", function (e) {
+          if (e.target === dlg) f_closeCheckVersionDialog();
+        });
+      }
+      // ESC 关闭
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" || e.keyCode === 27) f_closeCheckVersionDialog();
+      });
+    });
+
+    window.f_openCheckVersion = function () {
+      function doCheck() {
+        $.ajax({
+          url: '/version/openCheckVersion',
+          type: "get",
+          async: true,
+          data: {},
+          dataType: "json",
+          timeout: 0,
+          error: function () {
+            console.warn("[checkVersion] 网络异常或服务器无响应");
+          },
+          success: function (res) {
+            if (1000 === res.code) {
+              let info = res.info;
+              let version = info.version.toString();
+              let updateContent = info.updateContent;
+              let pubdate = info.pubdate;
+              downloadNewVersionUrl = info.url;
+
+              let html = `
+                <div class="version-info-card">
+                  <div class="version-info-header">
+                    <span class="version-number">
+                      <i class="fa fa-rocket"></i> v${version}
+                    </span>
+                    <span class="version-date">
+                      <i class="fa fa-clock-o"></i>${pubdate}
+                    </span>
+                  </div>
+                  <ul class="version-content">
+              `;
+              for (let i = 0; i < updateContent.length; i++) {
+                html += `<li>${updateContent[i]}</li>`;
+              }
+              html += `
+                  </ul>
+                </div>
+              `;
+
+              $("#checkVersionContent").html(html);
+              $("#checkVersionDialog").css("display", "flex");
+            }
+          }
+        });
+      }
+
+      // 确保 jQuery 已就绪
+      if (window.$) {
+        doCheck();
+      } else {
+        // 轮询等待 jQuery 加载（最多等待 5 秒）
+        let waited = 0;
+        let timer = setInterval(function () {
+          waited += 100;
+          if (window.$) {
+            clearInterval(timer);
+            doCheck();
+          } else if (waited >= 5000) {
+            clearInterval(timer);
+            console.warn("[checkVersion] jQuery 加载超时，跳过版本检测");
+          }
+        }, 100);
+      }
+    };
+
+    // DOM ready 后触发检测
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+      setTimeout(window.f_openCheckVersion, 300);
+    } else {
+      document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(window.f_openCheckVersion, 300);
+      });
+    }
+  })();
+</script>

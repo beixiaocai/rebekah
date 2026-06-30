@@ -133,159 +133,7 @@
     .right_col {
       background: #f5f7fa !important;
     }
-    
-    /* 新版本弹窗样式 - 简洁版 */
-    #checkVersionDialog .modal-dialog {
-      max-width: 600px;
-    }
-    
-    #checkVersionDialog .modal-content {
-      border-radius: 8px;
-      border: none;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    }
-    
-    #checkVersionDialog .modal-header {
-      background: #fafafa;
-      border-bottom: 1px solid #e5e7eb;
-      border-radius: 8px 8px 0 0;
-      padding: 16px 18px;
-    }
-    
-    #checkVersionDialog .modal-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: #374151;
-      display: flex;
-      align-items: center;
-      line-height: 1.5;
-    }
-    
-    #checkVersionDialog .modal-title::before {
-      content: "🚀";
-      margin-right: 6px;
-      font-size: 16px;
-    }
-    
-    #checkVersionDialog .modal-body {
-      padding: 18px 20px;
-      background: white;
-    }
-    
-    .version-info-card {
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
-      border-radius: 6px;
-      padding: 16px;
-    }
-    
-    .version-info-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #e5e7eb;
-    }
-    
-    .version-number {
-      display: inline-flex;
-      align-items: center;
-      padding: 3px 10px;
-      background: #4a90e2;
-      color: white;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-    
-    .version-number i {
-      margin-right: 4px;
-      font-size: 11px;
-    }
-    
-    .version-date {
-      font-size: 11px;
-      color: #6b7280;
-      display: flex;
-      align-items: center;
-    }
-    
-    .version-date i {
-      margin-right: 3px;
-      font-size: 11px;
-    }
-    
-    .version-content {
-      margin: 0;
-      padding-left: 18px;
-    }
-    
-    .version-content li {
-      padding: 4px 0;
-      font-size: 13px;
-      color: #374151;
-      line-height: 1.6;
-    }
-    
-    #checkVersionDialog .modal-footer {
-      background: #fafafa;
-      border-top: 1px solid #e5e7eb;
-      border-radius: 0 0 8px 8px;
-      padding: 12px 18px;
-    }
-    
-    #checkVersionDialog .btn {
-      border-radius: 4px;
-      padding: 6px 14px;
-      font-size: 13px;
-      font-weight: 500;
-      transition: all 0.2s;
-    }
-    
-    #checkVersionDialog .btn-default {
-      background: white;
-      border: 1px solid #d1d5db;
-      color: #6b7280;
-    }
-    
-    #checkVersionDialog .btn-default:hover {
-      background: #f9fafb;
-      border-color: #9ca3af;
-      color: #374151;
-    }
-    
-    #checkVersionDialog .btn-primary {
-      background: #4a90e2;
-      border: none;
-      color: white;
-    }
-    
-    #checkVersionDialog .btn-primary:hover {
-      background: #3a7bc8;
-      transform: translateY(-1px);
-      box-shadow: 0 2px 6px rgba(74, 144, 226, 0.3);
-    }
-    
-    #checkVersionDialog .btn-primary i {
-      margin-right: 4px;
-      font-size: 11px;
-    }
-    
-    #checkVersionDialog .close {
-      color: #6b7280;
-      opacity: 0.7;
-      font-size: 22px;
-      font-weight: 300;
-      text-shadow: none;
-      padding: 0;
-      margin: -2px 0 0 0;
-    }
-    
-    #checkVersionDialog .close:hover {
-      opacity: 1;
-      color: #374151;
-    }
+
   </style>
 {% endblock stylesheets %}
 
@@ -417,28 +265,11 @@
 
       </div>
     </div>
-    
-    <!-- 版本检测弹窗 -->
-    <div id="checkVersionDialog" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4 class="modal-title">{{ T.index_new_version|default:'发现新版本' }}</h4>
-          </div>
-          <div class="modal-body">
-            <div id="checkVersionContent"></div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">{{ T.index_cancel|default:'取消' }}</button>
-            <button type="button" onclick="f_downloadNewVersion()" class="btn btn-primary">
-              <i class="fa fa-download"></i> {{ T.index_download_version|default:'下载新版本' }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+
   </div>
+
+  {% include "app/includes/check_version_modal.html" %}
+
 {% endblock content %}
 
 {% block javascripts %}
@@ -447,10 +278,6 @@
   <script src="/static/lib/highcharts/modules/exporting.js"></script>
   <script src="/static/lib/highcharts-plugins/highcharts-zh_CN.js"></script>
   <script>
-    let eleCheckVersionDialog = $("#checkVersionDialog");
-    let eleCheckVersionContent = $("#checkVersionContent");
-    let downloadNewVersionUrl = "";
-
     Highcharts.setOptions({
       global: {
         useUTC: false
@@ -729,64 +556,11 @@
         }
       });
     }
-    
-    function f_downloadNewVersion() {
-      window.open(downloadNewVersionUrl);
-    }
-    
-    function f_openCheckVersion() {
-      $.ajax({
-        url: '/version/openCheckVersion',
-        type: "get",
-        async: true,
-        data: {},
-        dataType: "json",
-        timeout: 0,
-        error: function () {
-          myToast2025(_t("online_net_error", "网络异常，请确定网络正常！"), "error");
-        },
-        success: function (res) {
-          let info = res.info;
-          if (1000 === res.code) {
-            let version = info.version.toString();
-            let updateContent = info.updateContent;
-            let pubdate = info.pubdate;
-            downloadNewVersionUrl = info.url;
-            
-            let html = `
-              <div class="version-info-card">
-                <div class="version-info-header">
-                  <span class="version-number">
-                    <i class="fa fa-rocket"></i> v${version}
-                  </span>
-                  <span class="version-date">
-                    <i class="fa fa-clock-o"></i>${pubdate}
-                  </span>
-                </div>
-                <ul class="version-content">
-            `;
-            
-            for (let i = 0; i < updateContent.length; i++) {
-              html += `<li>${updateContent[i]}</li>`;
-            }
-            
-            html += `
-                </ul>
-              </div>
-            `;
-            
-            eleCheckVersionContent.html(html);
-            eleCheckVersionDialog.modal("toggle");
-          }
-        }
-      });
-    }
-    
+
     $(function() {
       f_openIndex();
       f_getStatisticsStream();
       f_getStatisticsControl();
-      f_openCheckVersion();
     });
   </script>
 {% endblock javascripts %}

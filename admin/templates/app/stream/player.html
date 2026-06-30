@@ -821,9 +821,62 @@
             let video_url = wsMp4Url
             eleInputAddress.val(video_url);
             f_playStart(video_url);
+
+            // 进入页面自动截图（延迟3秒，确保流已就绪）
+            if(stream_app!=="analyzer"){
+                setTimeout(function() {
+                        $.ajax({
+                            url: "/nvr/openAutoSnapShot",
+                            type: "post",
+                            async: true,
+                            data: {"app": stream_app, "name": stream_name},
+                            dataType: "json",
+                            timeout: 0,
+                            success: function (res) {
+                                if (1000 === res.code) {
+                                    console.log("auto snapshot success:", res.info.snapshot_filename);
+                                } else {
+                                    console.warn("auto snapshot failed:", res.msg);
+                                }
+                            },
+                            error: function () {
+                                console.warn("auto snapshot network error");
+                            }
+                        });
+                    }, 3000);
+            }
+
         }
         f_openVideoIsRecording();
     });
+
+    /* ========== 自动刷新（防止播放器内存泄漏） ========== */
+    // 与 dashboard 页面保持一致：30分钟自动刷新，刷新前30秒提示，用户操作重置计时器
+    (function() {
+        var REFRESH_INTERVAL = 30 * 60 * 1000;  // 30分钟自动刷新
+        var WARN_BEFORE = 30 * 1000;             // 刷新前30秒提示
+        var refreshTimer = null;
+        var warnTimer = null;
+        function scheduleRefresh() {
+            clearTimeout(refreshTimer);
+            clearTimeout(warnTimer);
+            // 先设定刷新前30秒的提示
+            warnTimer = setTimeout(function() {
+                myToast2025(_t('player_auto_refresh_warn', '页面即将自动刷新以释放内存...'), 'warn');
+            }, REFRESH_INTERVAL - WARN_BEFORE);
+            // 再设定到点刷新
+            refreshTimer = setTimeout(function() {
+                // 刷新前先销毁播放器，释放资源
+                try { if (ePlayer) { ePlayer.destroy(); } } catch(e) {}
+                location.reload();
+            }, REFRESH_INTERVAL);
+        }
+        scheduleRefresh();
+        // 用户操作时重置计时器（避免操作中途刷新）
+        ['click', 'mousedown', 'keydown'].forEach(function(evt) {
+            document.addEventListener(evt, scheduleRefresh);
+        });
+    })();
 </script>
 
 {% endblock javascripts %}
