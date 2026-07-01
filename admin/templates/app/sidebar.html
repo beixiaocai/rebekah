@@ -164,8 +164,8 @@
             html += "</ul>";
         html += "</li>";
     }
-    if(is_superuser || permissions["/stream/online"] || permissions["/stream/index"] || permissions["/stream/player"]
-        || permissions["/streamRecord/index"] || permissions["/streamRecord/timeplayer"]
+    if(is_superuser || permissions["/stream/online"] || permissions["/stream/index"]
+        || permissions["/streamRecord/index"]
     ) {
         html += "<li><a href=\"javascript:void(0);\" onclick=\"toggleMenu(this, event)\"><i class=\"fa fa-video-camera\"></i> {{ T.menu_video|default:'视频管理' }} <span class=\"fa fa-chevron-down\"></span></a>";
         html += "<ul class=\"nav child_menu\">";
@@ -175,16 +175,11 @@
         if (is_superuser || permissions["/stream/index"]) {
             html += "<li><a href=\"/stream/index\">{{ T.menu_video_camera|default:'摄像头管理' }}</a></li>";
         }
-        if (is_superuser || permissions["/stream/player"]) {
-            html += "<li><a href=\"/stream/player\">{{ T.menu_video_player|default:'单屏播放器' }}</a></li>";
-        }
 
         if (is_superuser || permissions["/streamRecord/index"]) {
             html += "<li><a href=\"/streamRecord/index\">{{ T.menu_record_plan|default:'录像计划管理' }}</a></li>";
         }
-        if (is_superuser || permissions["/streamRecord/timeplayer"]) {
-            html += "<li><a href=\"/streamRecord/timeplayer\">{{ T.menu_record_player|default:'录像播放器' }}</a></li>";
-        }
+
         html += "</ul>";
         html += "</li>";
     }

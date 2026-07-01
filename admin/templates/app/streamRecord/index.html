@@ -913,12 +913,12 @@
     }
     
     function f_timeplayer(code) {
-        let url = "/streamRecord/timeplayer?code=" + code;
+        let url = "/streamRecord/index?access=timeplayer&code=" + code;
         window.location.href = url;
     }
     
     function f_open_player(stream_app, stream_name) {
-        window.open("/stream/player?app=" + stream_app + "&name=" + stream_name);
+        window.open("/stream/index?access=player&app=" + stream_app + "&name=" + stream_name);
     }
 
     function f_del(code) {

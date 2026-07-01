@@ -17,6 +17,7 @@
         padding: 80px 20px !important;
         color: #9ca3af !important;
         display: block !important;
+        grid-column: 1 / -1;
     }
     
     .xc_empty-state i {
@@ -219,11 +220,188 @@
         color: #dc2626;
     }
 
-    /* 摄像头组样式 */
+    /* 摄像头组样式 - 卡片网格布局 */
     .xc_camera_groups {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 300px));
+        gap: 16px;
+    }
+
+    /* 设备卡片 */
+    .xc_device_card {
+        background: #FFFFFF;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+        border: 1px solid #e2e8f0;
         display: flex;
         flex-direction: column;
+    }
+
+    .xc_device_card:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        border-color: #cbd5e1;
+        transform: translateY(-2px);
+    }
+
+    .xc_card_header {
+        padding: 14px 16px;
+        background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
         gap: 10px;
+    }
+
+    .xc_card_device_icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #3b82f6, #60a5fa);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+
+    .xc_card_device_info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .xc_card_device_id {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1d2129;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .xc_card_device_vendor {
+        font-size: 12px;
+        color: #86909c;
+        margin-top: 2px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .xc_card_stats {
+        display: flex;
+        gap: 16px;
+        padding: 10px 16px;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .xc_card_stat {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 12px;
+        color: #4e5969;
+    }
+
+    .xc_card_stat .xc_stat_num {
+        font-weight: 700;
+        font-size: 15px;
+    }
+
+    .xc_card_stat.online .xc_stat_num { color: #059669; }
+    .xc_card_stat.offline .xc_stat_num { color: #dc2626; }
+    .xc_card_stat.total .xc_stat_num { color: #3b82f6; }
+
+    .xc_card_channels {
+        padding: 6px 16px;
+        flex: 1;
+        max-height: 180px;
+        overflow-y: auto;
+    }
+
+    .xc_channel_item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 0;
+        border-bottom: 1px solid #f8fafc;
+        font-size: 13px;
+    }
+
+    .xc_channel_item:last-child { border-bottom: none; }
+
+    .xc_channel_status_dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .xc_channel_status_dot.online {
+        background: #10b981;
+        box-shadow: 0 0 6px rgba(16, 185, 129, 0.5);
+    }
+
+    .xc_channel_status_dot.offline {
+        background: #d1d5db;
+    }
+
+    .xc_channel_name {
+        flex: 1;
+        color: #334155;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .xc_channel_protocol {
+        font-size: 11px;
+        color: #94a3b8;
+        flex-shrink: 0;
+    }
+
+    .xc_card_footer {
+        padding: 10px 16px;
+        border-top: 1px solid #f1f5f9;
+        display: flex;
+        gap: 8px;
+        background: #fafbfc;
+    }
+
+    .xc_card_btn {
+        flex: 1;
+        padding: 6px 8px;
+        border-radius: 6px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        border: 1px solid #e5e6eb;
+        background: white;
+        color: #4e5969;
+    }
+
+    .xc_card_btn:hover {
+        border-color: #3b82f6;
+        color: #3b82f6;
+        background: #f0f7ff;
+    }
+
+    .xc_card_btn.primary {
+        background: #f3f4f6;
+        border-color: #e5e7eb;
+        color: #4b5563;
+    }
+
+    .xc_card_btn.primary:hover {
+        background: #e5e7eb;
+        border-color: #d1d5db;
+        color: #374151;
     }
 
     .xc_group {
@@ -1072,14 +1250,13 @@
         </div>
     </div>
     <!--批量导入弹窗end -->
-    
+
     <!-- 摄像头添加/编辑弹窗 -->
     {% include 'app/stream/modal_form.html' %}
 
     </div>
   </div>
-
-  {% include "app/includes/check_version_modal.html" %}
+<!-- 注释引入 check_version_modal.html -->
 
 {% endblock content %}
 
@@ -1218,7 +1395,7 @@
     });
 
     function f_open_player(stream_app,stream_name){
-        window.open("/stream/player?app="+stream_app+"&name="+stream_name);
+        window.open("/stream/index?access=player&app="+stream_app+"&name="+stream_name);
     }
     function f_downloadStreamTemplate() {
         let url= "/static/resource/streamTemplate.xlsx";//v5.0 导入模板
@@ -1505,67 +1682,56 @@
                                 let dd = data[k];
                                 let dd_length = dd.length;
                                 let d0 = dd[0];
-                                let title = "<span class='xc_device_id'>" + d0.camera_device_id + "</span>";
-                                let item_html = "<div class=\"xc_group\">";
-                item_html+="<div class=\"xc_group_header\">";
-                    item_html+="<div class=\"xc_group_title\">"+title+"<span class=\"xc_group_count\">"+dd_length.toString()+"</span>";
-                    item_html+="</div>";
-                    item_html+="<div class=\"xc_group_actions\" onclick=\"toggleGroup(this)\">";
-                        item_html+="<div class=\"xc_group_toggle\">";
-                            item_html+="<svg class=\"xc-icon\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\">";
-                                item_html+="<polyline points=\"6 9 12 15 18 9\"/>";
-                            item_html+="</svg>";
-                        item_html+="</div>";
-                    item_html+="</div>";
-                item_html+="</div>";
-                item_html+="<div class=\"xc_camera_list expanded\">";
-                    item_html+="<table class=\"xc_camera_table\">";
-                        item_html+="<thead>";
-                            item_html+="<tr>";
-                                item_html+="<th>" + _t("camera_id", "ID") + "</th>";
-                                item_html+="<th>" + _t("camera_code", "编号") + "</th>";
-                                item_html+="<th>" + _t("camera_protocol", "接入协议") + "</th>";
-                                item_html+="<th>" + _t("camera_name", "名称") + "</th>";
-                                item_html+="<th>" + _t("camera_ip", "IP") + "</th>";
-                                item_html+="<th>" + _t("camera_audio", "音频") + "</th>";
-                                item_html+="<th>" + _t("camera_status", "状态") + "</th>";
-                                item_html+="<th>" + _t("camera_update_time", "更新时间") + "</th>";
-                                item_html+="<th>" + _t("camera_action", "操作") + "</th>";
-                            item_html+="</tr>";
-                        item_html+="</thead>";
-                        item_html+="<tbody>";
+                                let deviceId = d0.camera_device_id;
+                                let vendor = d0.camera_manufacturer || '';
+                                let onlineCount = 0;
+                                for (let i = 0; i < dd_length; i++) {
+                                    if (dd[i].forward_state === 1) onlineCount++;
+                                }
+                                let offlineCount = dd_length - onlineCount;
 
-                               for (let i = 0; i < dd_length; i++) {
+                                let item_html = '<div class="xc_device_card">';
+                                // 卡片头部
+                                item_html += '<div class="xc_card_header">';
+                                item_html += '<div class="xc_card_device_icon"><i class="fa fa-video-camera"></i></div>';
+                                item_html += '<div class="xc_card_device_info">';
+                                item_html += '<div class="xc_card_device_id">' + deviceId + '</div>';
+                                if (vendor) {
+                                    item_html += '<div class="xc_card_device_vendor">' + vendor + '</div>';
+                                }
+                                item_html += '</div>';
+                                item_html += '</div>';
+
+                                // 统计区
+                                item_html += '<div class="xc_card_stats">';
+                                item_html += '<div class="xc_card_stat total"><span class="xc_stat_num">' + dd_length + '</span>' + _t("camera_total", "共") + '</div>';
+                                item_html += '<div class="xc_card_stat online"><span class="xc_stat_num">' + onlineCount + '</span>' + _t("camera_forwarding", "转发中") + '</div>';
+                                item_html += '<div class="xc_card_stat offline"><span class="xc_stat_num">' + offlineCount + '</span>' + _t("camera_not_forwarding", "未转发") + '</div>';
+                                item_html += '</div>';
+
+                                // 通道预览区（最多显示5个）
+                                item_html += '<div class="xc_card_channels">';
+                                let previewCount = Math.min(dd_length, 5);
+                                for (let i = 0; i < previewCount; i++) {
                                     let d = dd[i];
-                                   item_html+="<tr>";
-                                item_html+="<td>"+d["id"]+"</td>";
-                                item_html+="<td style='width:15%;'><span class='xc_stream-code'>"+d["code"]+"</span></td>";
+                                    let isOnline = d.forward_state === 1;
+                                    item_html += '<div class="xc_channel_item">';
+                                    item_html += '<span class="xc_channel_status_dot ' + (isOnline ? 'online' : 'offline') + '"></span>';
+                                    item_html += '<span class="xc_channel_name" title="' + (d.nickname || d.code) + '">' + (d.nickname || d.code) + '</span>';
+                                    item_html += '<span class="xc_channel_protocol">' + get_pull_stream_type(d.pull_stream_type) + '</span>';
+                                    item_html += '</div>';
+                                }
+                                if (dd_length > 5) {
+                                    item_html += '<div class="xc_channel_item" style="justify-content:center;color:#94a3b8;font-size:12px;">...' + (dd_length - 5) + ' ' + _t("camera_item_unit", "条") + '</div>';
+                                }
+                                item_html += '</div>';
 
-                                item_html+="<td style='width:8%;'>"+get_pull_stream_type(d["pull_stream_type"])+"</td>";
+                                // 卡片底部按钮
+                                item_html += '<div class="xc_card_footer">';
+                                item_html += '<button class="xc_card_btn primary" onclick="window.location.href=\'/stream/index?access=channels&device_id=' + deviceId + '\'"><i class="fa fa-list"></i> ' + _t("camera_channel_list", "通道列表") + '</button>';
+                                item_html += '</div>';
 
-                                item_html+="<td style='width:10%;'>"+d["nickname"]+"</td>";
-                                item_html+="<td style='width:10%;'>"+d["pull_stream_ip"]+"</td>";
-                                item_html+="<td style='width:8%;'>"+get_audio_type(d["is_audio"])+"</td>";
-                                item_html+="<td style='width:15%;'>";
-                                   if(d["forward_state"] === 1){
-                                       item_html+="<span class='xc_stream-status xc_stream-status-active'><span class='xc_stream-status-icon'></span>" + _t("camera_forwarding", "转发中") + "</span><a href=\"javascript:f_open_player('"+d["app"]+"','"+d["name"]+"')\" class=\"sun-a-label\">" + _t("camera_play", "播放") + "</a><a href=\"javascript:f_openHandleStreamProxy('del','"+d["code"]+"','"+d["pull_stream_type"]+"')\" class=\"sun-a-label\">" + _t("camera_stop", "停止") + "</a>";
-                                   }else{
-                                       item_html+="<span class='xc_stream-status xc_stream-status-inactive'><span class='xc_stream-status-icon'></span>" + _t("camera_not_forwarding", "未转发") + "</span><a href=\"javascript:f_openHandleStreamProxy('add','"+d["code"]+"','"+d["pull_stream_type"]+"')\" class=\"sun-a-label\">" + _t("camera_start", "开启") + "</a>";
-                                   }
-                                item_html+="</td>";
-                                item_html += "<td>"+d["last_update_time"]+"</td>";
-                                item_html+="<td class=\"xc_action_buttons\">";
-
-                                    item_html+="<button class=\"xc_action_btn view\" onclick=\"f_edit('"+d["code"]+"')\" title=\"" + _t("camera_edit", "编辑") + "\"><i class=\"fa fa-edit\"></i> " + _t("camera_edit", "编辑") + "</button>";
-                                    item_html+="<button class=\"xc_action_btn delete\" onclick=\"f_del('"+d["code"]+"')\" title=\"" + _t("camera_delete", "删除") + "\"><i class=\"fa fa-trash\"></i> " + _t("camera_delete", "删除") + "</button>";
-
-                                item_html+="</td>";
-                            item_html+="</tr>";
-                               }
-                        item_html+="</tbody>";
-                    item_html+="</table>";
-                item_html+="</div>";
-            item_html+="</div>";
+                                item_html += '</div>';
 
                                 eleData.append(item_html);
                            }

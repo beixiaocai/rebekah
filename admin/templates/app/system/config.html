@@ -674,6 +674,20 @@
                           <input type="password" name="sipServerPass" required="required" value="{{config.sipServer.sipServerPass}}" class="config_input">
                         </div>
                       </div>
+
+                      <div class="config_form_group">
+                        <label class="config_label">{{ T.syscfg_server_timeout|default:'心跳超时(秒)' }}</label>
+                        <div class="config_control">
+                          <input type="number" name="sipServerTimeout" required="required" value="{{config.sipServer.sipServerTimeout}}" class="config_input">
+                        </div>
+                      </div>
+
+                      <div class="config_form_group">
+                        <label class="config_label">{{ T.syscfg_server_expiry|default:'注册过期(秒)' }}</label>
+                        <div class="config_control">
+                          <input type="number" name="sipServerExpiry" required="required" value="{{config.sipServer.sipServerExpiry}}" class="config_input">
+                        </div>
+                      </div>
                     </div>
 
                     <div class="config_col">
@@ -760,6 +774,12 @@
                         </div>
                       </div>
 
+                      <div class="config_form_group">
+                        <label class="config_label">{{ T.syscfg_local_sip_ip|default:'本地IP' }}</label>
+                        <div class="config_control">
+                          <input type="text" name="sipClientIp" value="{{config.sipParentServer.sipClientIp}}" class="config_input" placeholder="0.0.0.0">
+                        </div>
+                      </div>
                       <div class="config_form_group">
                         <label class="config_label">{{ T.syscfg_local_sip_port|default:'本地SIP端口' }}</label>
                         <div class="config_control">
@@ -1125,6 +1145,8 @@
         let ele_sipServerId = $("input[name='sipServerId']");
         let ele_sipServerRealm = $("input[name='sipServerRealm']");
         let ele_sipServerPass = $("input[name='sipServerPass']");
+        let ele_sipServerTimeout = $("input[name='sipServerTimeout']");
+        let ele_sipServerExpiry = $("input[name='sipServerExpiry']");
         let ele_rtpTransferMode = $("input[type=radio][name='rtpTransferMode']:checked");
         let eleRtpTransferAudioType = $("input[type=radio][name='rtpTransferAudioType']:checked");
         let eleAutoInviteAfterRecCateLog = $("input[type=checkbox][name='autoInviteAfterRecCateLog']");
@@ -1135,6 +1157,8 @@
         let sipServerId = ele_sipServerId.val();
         let sipServerRealm = ele_sipServerRealm.val();
         let sipServerPass = ele_sipServerPass.val();
+        let sipServerTimeout = parseInt(ele_sipServerTimeout.val());
+        let sipServerExpiry = parseInt(ele_sipServerExpiry.val());
         let rtpTransferMode = parseInt(ele_rtpTransferMode.val());
         let rtpTransferAudioType = parseInt(eleRtpTransferAudioType.val());
         let autoInviteAfterRecCateLog = eleAutoInviteAfterRecCateLog.is(':checked') ? 1 : 0;
@@ -1143,6 +1167,7 @@
         let eleCascadeEnable = $("input[type=checkbox][name='cascadeEnable']");
         let eleSipParentServerIp = $("input[name='sipParentServerIp']");
         let eleSipParentServerPort = $("input[name='sipParentServerPort']");
+        let eleSipClientIp = $("input[name='sipClientIp']");
         let eleSipLocalPort = $("input[name='sipLocalPort']");
         let eleSipParentTransferMode = $("input[type=radio][name='sipParentTransferMode']:checked");
         let eleSipParentServerId = $("input[name='sipParentServerId']");
@@ -1158,6 +1183,7 @@
         let cascadeEnable = eleCascadeEnable.is(':checked') ? 1 : 0;
         let sipParentServerIp = eleSipParentServerIp.val().trim();
         let sipParentServerPort = parseInt(eleSipParentServerPort.val());
+        let sipClientIp = eleSipClientIp.val().trim();
         let sipLocalPort = parseInt(eleSipLocalPort.val());
         let sipParentTransferMode = parseInt(eleSipParentTransferMode.val());
         let sipParentServerId = eleSipParentServerId.val();
@@ -1220,6 +1246,8 @@
                "sipServerId":sipServerId,
                "sipServerRealm":sipServerRealm,
                "sipServerPass":sipServerPass,
+               "sipServerTimeout":sipServerTimeout,
+               "sipServerExpiry":sipServerExpiry,
                "rtpTransferMode":rtpTransferMode,
                "rtpTransferAudioType":rtpTransferAudioType,
                "autoInviteAfterRecCateLog":autoInviteAfterRecCateLog,
@@ -1228,6 +1256,7 @@
                "cascadeEnable":cascadeEnable,
                "sipParentServerIp":sipParentServerIp,
                "sipParentServerPort":sipParentServerPort,
+               "sipClientIp":sipClientIp,
                "sipLocalPort":sipLocalPort,
                "sipParentTransferMode":sipParentTransferMode,
                "sipParentServerId":sipParentServerId,

@@ -1,0 +1,618 @@
+{% extends "app/base_site.html" %}
+
+{% block title %} {{ T.camera_channel_list|default:'通道列表' }} {% endblock title %}
+
+{% block stylesheets %}
+  {{ block.super }}
+<style>
+    /* 通用按钮 */
+    .xc_btn-common {
+        height: 32px;
+        padding: 0 14px;
+        font-size: 13px;
+        border-radius: 6px;
+        border: 1px solid #e2e8f0;
+        background: #ffffff;
+        color: #475569;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        line-height: 1;
+        box-sizing: border-box;
+        vertical-align: middle;
+    }
+    .xc_btn-common:hover {
+        background: #f8fafc;
+        border-color: #3b82f6;
+        color: #3b82f6;
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+        text-decoration: none;
+    }
+    .xc_btn-common:active { transform: translateY(0); }
+
+    /* 工具栏 */
+    .channels-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+    }
+    .channels-toolbar .search-box {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: #fff;
+        border: 1px solid #dcdfe6;
+        border-radius: 6px;
+        padding: 6px 12px;
+        flex: 1;
+        max-width: 280px;
+        height: 32px;
+        box-sizing: border-box;
+        transition: border-color .2s, box-shadow .2s;
+    }
+    .channels-toolbar .search-box:focus-within {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59,130,246,.12);
+    }
+    .channels-toolbar .search-box input {
+        border: none;
+        outline: none;
+        font-size: 13px;
+        color: #374151;
+        background: transparent;
+        flex: 1;
+        min-width: 0;
+    }
+    .channels-toolbar .search-box input::placeholder { color: #9ca3af; }
+    .channels-toolbar .search-box .search-icon { color: #9ca3af; font-size: 13px; }
+
+    .channels-toolbar .xc_select {
+        height: 32px;
+        padding: 0 28px 0 10px;
+        font-size: 13px;
+        border: 1px solid #dcdfe6;
+        border-radius: 6px;
+        background: #fff;
+        color: #475569;
+        outline: none;
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%234E5969" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"%3e%3cpolyline points="6 9 12 15 18 9"%3e%3c/polyline%3e%3c/svg%3e');
+        background-repeat: no-repeat;
+        background-position: right 8px center;
+        background-size: 12px;
+    }
+    .channels-toolbar .xc_select:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59,130,246,.12);
+    }
+
+    .channels-toolbar .stat-pills {
+        display: flex;
+        gap: 8px;
+        margin-left: auto;
+    }
+    .channels-toolbar .stat-pill {
+        padding: 4px 12px;
+        border-radius: 14px;
+        font-size: 12px;
+        font-weight: 500;
+        background: #f1f5f9;
+        color: #64748b;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .channels-toolbar .stat-pill .pill-num {
+        color: #3b82f6;
+        font-weight: 700;
+        margin-left: 2px;
+        min-width: 16px;
+        text-align: center;
+    }
+
+    .channels-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1e293b;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        vertical-align: middle;
+    }
+    .channels-title .device-badge {
+        background: #f0f7ff;
+        color: #3b82f6;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    #top_loading {
+        font-size: 12px;
+        color: #64748b;
+        font-weight: 400;
+        margin-left: 8px;
+    }
+    #top_loading img {
+        vertical-align: middle;
+        margin-right: 4px;
+    }
+
+    #top_msg {
+        display: none;
+        margin: 10px 0;
+        padding: 8px 14px;
+        border-radius: 6px;
+        font-size: 13px;
+    }
+    .xc_msg-error { background: #fef2f2; color: #dc2626; }
+    .xc_msg-success { background: #f0fdf4; color: #16a34a; }
+
+    /* 表格 */
+    .xc_table-wrap {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+    .xc_camera_table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        table-layout: auto;
+    }
+    .xc_camera_table th {
+        padding: 10px 12px;
+        text-align: left;
+        font-weight: 500;
+        color: #475569;
+        font-size: 13px;
+        border-bottom: 2px solid #e2e8f0;
+        background: #f8fafc;
+        white-space: nowrap;
+    }
+    .xc_camera_table td {
+        padding: 8px 12px;
+        font-size: 13px;
+        color: #334155;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .xc_camera_table tr:last-child td { border-bottom: none; }
+    .xc_camera_table tbody tr:hover { background-color: rgba(59, 130, 246, 0.03); }
+    .xc_camera_table td nowrap-cell { white-space: nowrap; }
+
+    .xc_stream-code {
+        font-family: 'Courier New', monospace;
+        font-size: 12px;
+        color: #64748b;
+    }
+
+    .xc_stream-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 12px;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+    .xc_stream-status-active { background: #f0fdf4; color: #16a34a; }
+    .xc_stream-status-inactive { background: #f8fafc; color: #94a3b8; }
+    .xc_stream-status-icon { width: 6px; height: 6px; border-radius: 50%; }
+    .xc_stream-status-active .xc_stream-status-icon { background: #16a34a; box-shadow: 0 0 4px rgba(22, 163, 74, 0.5); }
+    .xc_stream-status-inactive .xc_stream-status-icon { background: #cbd5e1; }
+
+    .sun-a-label {
+        margin-left: 6px;
+        font-size: 12px;
+        color: #3b82f6;
+        text-decoration: none;
+        cursor: pointer;
+    }
+    .sun-a-label:hover { text-decoration: underline; }
+
+    .xc_action_btn {
+        padding: 2px 8px;
+        font-size: 12px;
+        border-radius: 4px;
+        border: 1px solid #d1d5db;
+        background: white;
+        color: #6b7280;
+        cursor: pointer !important;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        white-space: nowrap;
+        height: 24px;
+        line-height: 1;
+        margin-right: 4px;
+    }
+    .xc_action_btn:hover { border-color: #3b82f6; color: #3b82f6; }
+    .xc_action_btn.delete:hover { border-color: #ef4444; color: #ef4444; background: #fef2f2; }
+
+    /* 空状态 */
+    .xc_empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #94a3b8;
+        font-size: 14px;
+    }
+    .xc_empty-state i {
+        font-size: 40px;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    /* 分页 */
+    .xc_pagination {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        margin-top: 16px;
+        flex-wrap: wrap;
+    }
+    .xc_page-btn {
+        min-width: 30px;
+        height: 30px;
+        border: 1px solid #e2e8f0;
+        background: white;
+        border-radius: 6px;
+        font-size: 13px;
+        color: #475569;
+        cursor: pointer;
+        padding: 0 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .xc_page-btn:hover { border-color: #3b82f6; color: #3b82f6; }
+    .xc_page-btn.active { background: #3b82f6; border-color: #3b82f6; color: white; }
+    .xc_page-info { margin: 0 8px; font-size: 13px; color: #64748b; }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+
+  <div class="right_col" role="main">
+    <div class="">
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="x_panel">
+            <div class="x_title">
+              <h2>
+                <a href="/stream/index" class="xc_btn-common" style="margin-right:10px;"><i class="fa fa-arrow-left"></i> {{ T.camera_back|default:'返回' }}</a>
+                <span class="channels-title">
+                  {{ T.camera_channel_list|default:'通道列表' }}
+                  {% if device_id %}<span class="device-badge">{{ device_id }}</span>{% endif %}
+                </span>
+                <span id="top_loading" style="display:none;"><img class="top_loading_img" src="/static/images/load.gif" alt="loading">{{ T.common_loading|default:'加载中' }}</span>
+              </h2>
+              <div class="clearfix"></div>
+            </div>
+
+            <div class="x_content">
+              <!-- 工具栏 -->
+              <div class="channels-toolbar">
+                <div class="search-box">
+                  <span class="search-icon"><i class="fa fa-search"></i></span>
+                  <input type="text" id="search_text_input" placeholder="{{ T.camera_search_placeholder|default:'输入视频流名称或编号' }}" onkeyup="if(event.keyCode===13)doSearch()">
+                </div>
+                <select id="search_status_select" class="xc_select" onchange="doSearch()">
+                  <option value="-1">{{ T.camera_all_status|default:'全部状态' }}</option>
+                  <option value="1">{{ T.camera_forwarding|default:'转发中' }}</option>
+                  <option value="0">{{ T.camera_not_forwarding|default:'未转发' }}</option>
+                </select>
+                <button type="button" onclick="f_refresh()" class="xc_btn-common"><i class="fa fa-refresh"></i> {{ T.camera_refresh|default:'刷新' }}</button>
+                <div class="stat-pills">
+                  <span class="stat-pill"><i class="fa fa-circle" style="color:#10b981;font-size:8px;"></i>{{ T.camera_forwarding|default:'转发中' }}<span class="pill-num" id="onlineCount">--</span></span>
+                  <span class="stat-pill"><i class="fa fa-circle" style="color:#94a3b8;font-size:8px;"></i>{{ T.camera_total|default:'共' }}<span class="pill-num" id="totalCount">--</span></span>
+                </div>
+              </div>
+
+              <div id="top_msg"></div>
+
+              <!-- 表格数据 -->
+              <div class="xc_table-wrap">
+                <div id="data"></div>
+              </div>
+
+              <!-- 分页 -->
+              <div class="xc_pagination" id="pageData"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 摄像头添加/编辑弹窗（复用modal_form） -->
+  {% include 'app/stream/modal_form.html' %}
+
+{% endblock content %}
+
+{% block javascripts %}
+{{ block.super }}
+  <!-- jsencrypt -->
+  <script src="/static/lib/jsencrypt/3.3.1/jsencrypt.min.js"></script>
+  <script src="/static/app/stream/modal_form.js?v2"></script>
+<script>
+    var curPage = 1;
+    var curPageSize = 20;
+    var deviceId = "{{ device_id }}";
+    var userPublicKey = '{{ userPublicKey }}';
+    var eleData = $("#data");
+    var eleTopLoading = $("#top_loading");
+    var eleTopMsg = $("#top_msg");
+    var eleSearchTextInput = $("#search_text_input");
+    var eleSearchStatusSelect = $("#search_status_select");
+    var eleOnlineCount = $("#onlineCount");
+    var eleTotalCount = $("#totalCount");
+
+    function showTopMsg(msg, type) {
+        eleTopMsg.attr("class", "xc_msg-" + type).html(msg).show();
+        setTimeout(function() { eleTopMsg.hide(); }, 3000);
+    }
+
+    function f_refresh() {
+        f_openIndex(curPage, curPageSize);
+    }
+
+    function doSearch() {
+        curPage = 1;
+        f_openIndex(curPage, curPageSize);
+    }
+
+    function f_openIndex(page, page_size) {
+        curPage = page;
+        curPageSize = page_size;
+        var search_text = eleSearchTextInput.val().trim();
+        var search_status = parseInt(eleSearchStatusSelect.val());
+        eleTopLoading.show();
+        $.ajax({
+            url: '/stream/openChannels',
+            type: "get",
+            data: {
+                "device_id": deviceId,
+                "p": page,
+                "ps": page_size,
+                "search_text": search_text,
+                "search_status": search_status
+            },
+            dataType: "json",
+            success: function(res) {
+                eleTopLoading.hide();
+                if (res.code === 1000) {
+                    var data = res.data;
+                    var totalCount = res.pageData.count || 0;
+                    var onlineCount = 0;
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i].forward_state === 1) onlineCount++;
+                    }
+                    // 统计在线数需要基于全量数据，这里用当前页近似
+                    eleTotalCount.text(totalCount);
+
+                    if (data.length === 0) {
+                        eleData.html("<div class='xc_empty-state'><i class='fa fa-inbox'></i>" + _t("camera_no_data", "暂无数据") + "</div>");
+                        eleOnlineCount.text(0);
+                    } else {
+                        var extra = res.extra;
+                        var pullStreamTypes = extra["pullStreamTypes"];
+                        var audioTypes = extra["audioTypes"];
+
+                        function get_pull_stream_type(pull_stream_type) {
+                            for (var i = 0; i < pullStreamTypes.length; i++) {
+                                if (pullStreamTypes[i]["id"] === pull_stream_type) return pullStreamTypes[i]["name"];
+                            }
+                            return pull_stream_type;
+                        }
+                        function get_audio_type(audio_type) {
+                            for (var i = 0; i < audioTypes.length; i++) {
+                                if (audioTypes[i]["type"] === audio_type) return audioTypes[i]["name"];
+                            }
+                            return audio_type;
+                        }
+
+                        var html = '<table class="xc_camera_table">';
+                        html += '<thead><tr>';
+                        html += '<th>' + _t("camera_id", "ID") + '</th>';
+                        html += '<th>' + _t("camera_code", "编号") + '</th>';
+                        html += '<th>' + _t("camera_protocol", "接入协议") + '</th>';
+                        html += '<th>' + _t("camera_name", "名称") + '</th>';
+                        html += '<th>' + _t("camera_ip", "IP") + '</th>';
+                        html += '<th>' + _t("camera_audio", "音频") + '</th>';
+                        html += '<th>' + _t("camera_status", "状态") + '</th>';
+                        html += '<th>' + _t("camera_update_time", "更新时间") + '</th>';
+                        html += '<th>' + _t("camera_action", "操作") + '</th>';
+                        html += '</tr></thead>';
+                        html += '<tbody>';
+
+                        for (var i = 0; i < data.length; i++) {
+                            var d = data[i];
+                            html += '<tr>';
+                            html += '<td>' + d["id"] + '</td>';
+                            html += '<td><span class="xc_stream-code">' + d["code"] + '</span></td>';
+                            html += '<td>' + get_pull_stream_type(d["pull_stream_type"]) + '</td>';
+                            html += '<td>' + (d["nickname"] || '') + '</td>';
+                            html += '<td>' + (d["pull_stream_ip"] || '') + '</td>';
+                            html += '<td>' + get_audio_type(d["is_audio"]) + '</td>';
+                            html += '<td>';
+                            if (d["forward_state"] === 1) {
+                                html += '<span class="xc_stream-status xc_stream-status-active"><span class="xc_stream-status-icon"></span>' + _t("camera_forwarding", "转发中") + '</span>';
+                                html += '<a href="javascript:f_open_player(\'' + d["app"] + '\',\'' + d["name"] + '\')" class="sun-a-label">' + _t("camera_play", "播放") + '</a>';
+                                html += '<a href="javascript:f_openHandleStreamProxy(\'del\',\'' + d["code"] + '\',\'' + d["pull_stream_type"] + '\')" class="sun-a-label">' + _t("camera_stop", "停止") + '</a>';
+                            } else {
+                                html += '<span class="xc_stream-status xc_stream-status-inactive"><span class="xc_stream-status-icon"></span>' + _t("camera_not_forwarding", "未转发") + '</span>';
+                                html += '<a href="javascript:f_openHandleStreamProxy(\'add\',\'' + d["code"] + '\',\'' + d["pull_stream_type"] + '\')" class="sun-a-label">' + _t("camera_start", "开启") + '</a>';
+                            }
+                            html += '</td>';
+                            html += '<td>' + (d["last_update_time"] || '') + '</td>';
+                            html += '<td class="nowrap-cell">';
+                            html += '<button class="xc_action_btn" onclick="f_edit(\'' + d["code"] + '\')" title="' + _t("camera_edit", "编辑") + '"><i class="fa fa-edit"></i>' + _t("camera_edit", "编辑") + '</button>';
+                            html += '<button class="xc_action_btn delete" onclick="f_del(\'' + d["code"] + '\')" title="' + _t("camera_delete", "删除") + '"><i class="fa fa-trash"></i>' + _t("camera_delete", "删除") + '</button>';
+                            html += '</td>';
+                            html += '</tr>';
+                        }
+                        html += '</tbody></table>';
+                        eleData.html(html);
+                        eleOnlineCount.text(onlineCount);
+                    }
+                    f_show_pageData(res.pageData);
+                } else {
+                    eleData.html("<div class='xc_empty-state'><i class='fa fa-exclamation-circle'></i>" + res.msg + "</div>");
+                }
+            },
+            error: function() {
+                eleTopLoading.hide();
+                myToast2025(_t("online_net_error", "网络异常，请确定网络正常！"), "error");
+            }
+        });
+    }
+
+    function f_show_pageData(pageData) {
+        if (!pageData || !pageData.pageLabels) {
+            $("#pageData").html("");
+            return;
+        }
+        var html = "";
+        for (var i = 0; i < pageData.pageLabels.length; i++) {
+            var p = pageData.pageLabels[i];
+            if (p.cur === 1) {
+                html += '<span class="xc_page-btn active">' + p.name + '</span>';
+            } else {
+                html += '<a class="xc_page-btn" href="javascript:f_openIndex(' + p.page + ',' + curPageSize + ')">' + p.name + '</a>';
+            }
+        }
+        html += '<span class="xc_page-info">' + _t("camera_total", "共") + ' ' + pageData.page_num + ' ' + _t("camera_page_unit", "页") + ' / ' + pageData.count + ' ' + _t("camera_item_unit", "条") + '</span>';
+        $("#pageData").html(html);
+    }
+
+    function f_open_player(app, name) {
+        window.open('/stream/index?access=player&app=' + app + '&name=' + name, '_blank');
+    }
+
+    function f_openHandleStreamProxy(handle, code, pull_stream_type) {
+        var url = handle === 'add' ? '/stream/openAddStreamProxy' : '/stream/openDelStreamProxy';
+        $.ajax({
+            url: url,
+            type: "post",
+            data: { code: code, pull_stream_type: pull_stream_type },
+            success: function(res) {
+                if (res.code === 1000) {
+                    myToast2025(res.msg, "success");
+                    setTimeout(f_refresh, 1000);
+                } else {
+                    myToast2025(res.msg, "error");
+                }
+            }
+        });
+    }
+
+    function f_edit(code) {
+        if (typeof streamModal !== 'undefined') {
+            streamModal.openEdit(code);
+        }
+    }
+
+    // ONVIF设备探测（编辑RTSP通道时使用）
+    function f_openCheckDevice() {
+        const ip = $('#stream_onvif_ip').val().trim();
+        const username = $('#stream_onvif_username').val().trim();
+        const password = $('#stream_onvif_password').val().trim();
+
+        if (!ip) {
+            myToast2025(_t("camera_onvif_ip_empty", "ONVIF IP不能为空"), "error");
+            return;
+        }
+        if (!/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ip)) {
+            myToast2025(_t("camera_onvif_ip_error", "ONVIF IP格式不正确"), "error");
+            return;
+        }
+        if (!username) {
+            myToast2025(_t("camera_onvif_user_empty", "ONVIF用户名不能为空"), "error");
+            return;
+        }
+        if (!password) {
+            myToast2025(_t("camera_onvif_pwd_empty", "ONVIF密码不能为空"), "error");
+            return;
+        }
+
+        const encryptor = new JSEncrypt();
+        encryptor.setPublicKey(userPublicKey);
+        let username_s = encryptor.encrypt(username);
+        let password_s = encryptor.encrypt(password);
+
+        $('#onvif_detect_icon').hide();
+        $('#onvif_detect_spinner').show();
+        $('#onvif_detect_btn').prop('disabled', true);
+        $('#onvif_detect_text').text(_t("common_loading", "探测中..."));
+
+        $.ajax({
+            url: "/onvif/openCheckDevice",
+            type: "post",
+            data: { "ip": ip, "username": username_s, "password": password_s },
+            dataType: "json",
+            success: (res) => {
+                if (res.code === 1000) {
+                    const info = res.info;
+                    const streamUri = info.streamUri;
+                    const deviceInfo = info.deviceInfo;
+                    $('#stream_pull_url').val(streamUri || '');
+                    $('#stream_pull_ip').val(ip);
+                    $('#stream_camera_name').val(deviceInfo.HardwareId || '');
+                    $('#stream_camera_manufacturer').val(deviceInfo.Manufacturer || '');
+                    const remark = `FirmwareVersion=${deviceInfo.FirmwareVersion || ''},Model=${deviceInfo.Model || ''},SerialNumber=${deviceInfo.SerialNumber || ''}`;
+                    $('#stream_remark').val(remark);
+                    myToast2025(_t("camera_probe_success", "探测成功"), "success");
+                } else {
+                    myToast2025(res.msg || _t("camera_probe_fail", "探测失败"), "error", 3000);
+                }
+            },
+            error: () => {
+                myToast2025(_t("online_net_error", "网络异常，请确定网络正常！"), "error");
+            },
+            complete: () => {
+                $('#onvif_detect_icon').show();
+                $('#onvif_detect_spinner').hide();
+                $('#onvif_detect_btn').prop('disabled', false);
+                $('#onvif_detect_text').text(_t("streamform_detect_device", "探测设备"));
+            }
+        });
+    }
+
+    function f_del(code) {
+        if (!confirm(_t("camera_confirm_delete", "确认删除吗？"))) return;
+        $.ajax({
+            url: '/stream/openDel',
+            type: "post",
+            data: { handle: 'one', code: code },
+            success: function(res) {
+                if (res.code === 1000) {
+                    myToast2025(res.msg, "success");
+                    f_refresh();
+                } else {
+                    myToast2025(res.msg, "error");
+                }
+            }
+        });
+    }
+
+    // 页面加载
+    window.onload = function() {
+        f_openIndex(curPage, curPageSize);
+        // 初始化弹窗（绑定事件）
+        if (typeof streamModal !== 'undefined') {
+            streamModal.init();
+        }
+        // 30秒自动刷新
+        setInterval(f_refresh, 30000);
+    };
+</script>
+{% endblock javascripts %}

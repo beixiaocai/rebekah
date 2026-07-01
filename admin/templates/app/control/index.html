@@ -1173,7 +1173,7 @@
     </div>
   </div>
 
-  {% include "app/includes/check_version_modal.html" %}
+<!-- 注释引入 check_version_modal.html -->
 
 {% endblock content %}
 
@@ -1546,7 +1546,7 @@
     }
     
     function f_open_player(stream_app, stream_name){
-        window.open("/stream/player?app="+stream_app+"&name="+stream_name);
+        window.open("/stream/index?access=player&app="+stream_app+"&name="+stream_name);
     }
 
     function f_toggle_more_menu(button, stream_app, stream_name) {
