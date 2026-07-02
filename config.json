@@ -51,8 +51,8 @@
         "sipServerId": "34020000009000009999",
         "sipServerRealm": "3402000000",
         "sipServerPass": "123456",
-        "sipServerTimeout": 1800,
-        "sipServerExpiry": 3600,
+        "sipServerTimeout": 300,
+        "sipServerExpiry": 1800,
         "rtpTransferMode": 0,
         "rtpTransferAudioType": 0,
         "autoInviteAfterRecCateLog": true
@@ -61,6 +61,7 @@
         "enable": false,
         "sipServerIp": "127.0.0.1",
         "sipServerPort": 15060,
+		"sipClientIp": "0.0.0.0",
         "sipLocalPort": 5060,
         "sipTransferMode": 0,
         "sipServerId": "34020000002000000001",
