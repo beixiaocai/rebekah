@@ -910,7 +910,7 @@
             <div class="xc_form-group" id="password_group">
                 <label class="xc_form-label">{{ T.user_input_password_required|default:'密码' }}<span class="required">*</span></label>
                 <input type="password" id="input_password" class="xc_form-input" placeholder="{{ T.user_input_password|default:'6-16位密码' }}">
-                <div class="xc_password-hint">{{ T.user_password_length_hint|default:'密码长度须为6-16位' }}</div>
+                <div class="xc_password-hint">{{ T.user_password_length|default:'密码长度须为6-16位' }}</div>
             </div>
             
             <div class="xc_form-group" id="new_password_group" style="display: none;">
@@ -1138,6 +1138,10 @@
             myToast2025(_t('user_input_username_required', '请输入用户名'), 'error');
             return false;
         }
+        if(username.length < 3) {
+            myToast2025(_t('user_username_length', '用户名长度需至少3位'), 'error');
+            return false;
+        }
         if(email === '') {
             myToast2025(_t('user_input_email_required', '请输入邮箱'), 'error');
             return false;
@@ -1157,7 +1161,7 @@
                 return false;
             }
             if(password.length < 6 || password.length > 16) {
-                myToast2025(_t('user_password_length_error', '密码长度须为6-16位'), 'error');
+                myToast2025(_t('user_password_length', '密码长度须为6-16位'), 'error');
                 return false;
             }
             formData.password = password;
@@ -1168,7 +1172,7 @@
             
             if(new_password !== '') {
                 if(new_password.length < 6 || new_password.length > 16) {
-                    myToast2025(_t('user_password_length_error', '密码长度须为6-16位'), 'error');
+                    myToast2025(_t('user_password_length', '密码长度须为6-16位'), 'error');
                     return false;
                 }
                 if(new_password !== re_password) {

@@ -7,6 +7,15 @@
     <!--<link rel="shortcut icon" href="/static/images/user.ico">-->
     <link type="image/png" href="/static/images/logo.png?123456" rel="shortcut icon" />
     <title>{{ T.login_title|default:'登录' }} | {{ settings.name }}</title>
+    <script>
+        // 注入全局多语言字典到前端
+        window.LANG = {{ T_JSON|safe|default:"{}" }};
+        // 前端翻译工具函数
+        function _t(key, default_val) {
+            if (!window.LANG) return default_val || key;
+            return window.LANG[key] !== undefined ? window.LANG[key] : (default_val || key);
+        }
+    </script>
     <style>
         * {
             margin: 0;
@@ -290,7 +299,7 @@
         }
 
         if(username.length < 3){
-            myToast2025(_t("login_username_invalid", "用户名格式不正确"), "error");
+            myToast2025(_t("user_username_length", "用户名长度需至少3位"), "error");
             return false;
         }
 
@@ -299,8 +308,8 @@
             return false;
         }
 
-        if(password.length < 3){
-            myToast2025(_t("login_password_invalid", "密码格式不正确"), "error");
+        if(password.length < 6 || password.length > 16){
+            myToast2025(_t("user_password_length", "密码长度须为6-16位"), "error");
             return false;
         }
 

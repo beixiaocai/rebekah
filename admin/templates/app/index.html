@@ -51,8 +51,8 @@
     .icon-algorithm,
     .icon-system,
     .icon-auth {
-      background: rgba(59, 130, 246, 0.08);
-      color: #3b82f6;
+      background: rgba(16, 185, 129, 0.08);
+      color: #10b981;
     }
     
     .chart-container {
@@ -130,6 +130,132 @@
       background: linear-gradient(90deg, #3b82f6, #60a5fa);
     }
 
+    /* 硬件利用率样式 */
+    .icon-hardware {
+      background: rgba(16, 185, 129, 0.08);
+      color: #10b981;
+    }
+
+    .hw-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .hw-card {
+      background: #f9fafb;
+      border: 1px solid #eef0f3;
+      border-radius: 8px;
+      padding: 12px 14px;
+      transition: all 0.3s ease;
+    }
+
+    .hw-card:hover {
+      border-color: #d1d5db;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .hw-card-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #eef0f3;
+    }
+
+    .hw-type-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 600;
+      color: white;
+      flex-shrink: 0;
+      letter-spacing: 0.3px;
+    }
+
+    .hw-type-nvidia { background: #76b900; }
+    .hw-type-intel { background: #0071c5; }
+    .hw-type-amd { background: #ed1c24; }
+    .hw-type-rknpu { background: #ff6600; }
+    .hw-type-ascend { background: #c7000b; }
+    .hw-type-jetson-gpu { background: #76b900; }
+    .hw-type-unknown { background: #9ca3af; }
+
+    .hw-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .hw-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 6px 0;
+    }
+
+    .hw-label {
+      font-size: 12px;
+      color: #9ca3af;
+      width: 36px;
+      flex-shrink: 0;
+    }
+
+    .hw-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: #4b5563;
+      min-width: 52px;
+      flex-shrink: 0;
+    }
+
+    .hw-progress {
+      flex: 1;
+      height: 6px;
+      background: #e5e7eb;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .hw-progress-bar {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .hw-progress-bar.green-hw {
+      background: linear-gradient(90deg, #10b981, #34d399);
+    }
+
+    .hw-progress-bar.gray-hw {
+      background: linear-gradient(90deg, #9ca3af, #d1d5db);
+    }
+
+    .no-hardware {
+      text-align: center;
+      padding: 50px 10px;
+      color: #9ca3af;
+      font-size: 13px;
+    }
+
+    .no-hardware i {
+      display: block;
+      font-size: 28px;
+      margin-bottom: 10px;
+      color: #d1d5db;
+    }
+
+    .hardware_container {
+      min-height: 180px;
+      padding: 4px 0;
+    }
+
     .right_col {
       background: #f5f7fa !important;
     }
@@ -177,21 +303,18 @@
       
       <div class="row">
 
-        <!-- 视频信息 -->
+        <!-- 硬件利用率 -->
         <div class="col-md-4 col-sm-6 col-xs-12">
-          <div class="modern-card card-algorithm">
+          <div class="modern-card card-hardware">
             <div class="modern-card-title">
-              <i class="fa fa-cogs icon-algorithm"></i>
-              {{ T.index_video_info|default:'视频信息' }}
+              <i class="fa fa-server icon-hardware"></i>
+              {{ T.index_hardware_usage|default:'硬件利用率' }}
             </div>
-            <table class="info-table" id="stream_data">
-              <tbody>
-                <tr>
-                  <td>{{ T.index_video_info|default:'视频信息' }}</td>
-                  <td>{{ T.index_loading|default:'加载中...' }}</td>
-                </tr>
-              </tbody>
-            </table>
+            <div id="hardware_container" class="hardware_container">
+              <div id="hardware_data" class="hw-list">
+                <div class="no-hardware">{{ T.index_loading|default:'加载中...' }}</div>
+              </div>
+            </div>
           </div>
         </div>
         <!-- 系统信息 -->
@@ -409,8 +532,7 @@
     let cpuCharts = createModernChart('cpuCharts', '{{ T.index_cpu_usage|default:"CPU利用率" }}', '#2563eb');
     let memoryCharts = createModernChart('memoryCharts', '{{ T.index_mem_usage|default:"内存利用率" }}', '#3b82f6');
     let diskCharts = createModernChart('diskCharts', '{{ T.index_disk_usage|default:"存储利用率" }}', '#60a5fa');
-    
-    let eleStreamData = $("#stream_data tbody");
+
     let eleControlData = $("#control_data tbody");
 
     // 系统信息元素
@@ -424,6 +546,65 @@
     
 
     
+    // 更新硬件利用率展示(卡片式布局,支持多卡动态渲染)
+    // 任何异常都不破坏页面,失败时显示"暂无数据"
+    function f_updateHardware(hardwareData) {
+      let container = $("#hardware_data");
+      try {
+        if (!hardwareData || !Array.isArray(hardwareData) || hardwareData.length === 0) {
+          container.html('<div class="no-hardware"><i class="fa fa-server"></i>' +
+            _t("index_no_hardware", "未检测到GPU/NPU设备") + '</div>');
+          return;
+        }
+
+        let html = "";
+        for (let i = 0; i < hardwareData.length; i++) {
+          let hw = hardwareData[i];
+          if (!hw || typeof hw !== "object") continue;
+
+          // 字段防御: 确保所有字段有合法默认值,避免 undefined 破坏渲染
+          let hwType = hw.type || "unknown";
+          let hwTypeLabel = hw.type_label || hwType;
+          let hwName = hw.name || "Unknown";
+          let hwUtil = (typeof hw.utilization === "number" && !isNaN(hw.utilization)) ? hw.utilization : -1;
+          let hwAvail = hw.available === 1 ? 1 : 0;
+
+          // 卡片容器
+          html += '<div class="hw-card">';
+
+          // 卡片头:类型标签 + 设备名称
+          html += '<div class="hw-card-header">';
+          html += '<span class="hw-type-badge hw-type-' + hwType + '">' + hwTypeLabel + '</span>';
+          html += '<span class="hw-name" title="' + hwName + '">' + hwName + '</span>';
+          html += '</div>';
+
+          // 利用率行
+          let utilStr = "N/A";
+          let barWidth = 0;
+          let barClass = "gray-hw";
+          if (hwAvail === 1 && hwUtil >= 0) {
+            utilStr = hwUtil.toFixed(1) + "%";
+            barWidth = Math.min(hwUtil, 100);
+            barClass = "green-hw";
+          }
+          html += '<div class="hw-row">';
+          html += '<span class="hw-label">' + _t("index_hardware_util", "利用率") + '</span>';
+          html += '<span class="hw-value">' + utilStr + '</span>';
+          html += '<div class="hw-progress"><div class="hw-progress-bar ' + barClass + '" style="width:' + barWidth + '%"></div></div>';
+          html += '</div>';
+
+          html += '</div>';
+        }
+
+        container.html(html);
+      } catch (e) {
+        // 任何异常都不破坏页面,显示"暂无数据"
+        console.log("f_updateHardware error:", e);
+        container.html('<div class="no-hardware"><i class="fa fa-server"></i>' +
+          _t("index_no_hardware", "未检测到GPU/NPU设备") + '</div>');
+      }
+    }
+
     function f_openIndex() {
       $.ajax({
         url: '/index/openIndex',
@@ -438,20 +619,21 @@
         success: function (res) {
           if (res.code === 1000) {
             try {
-              let osInfo = res["osInfo"];
-              let appInfo = res["appInfo"];
-              
-              let project_version = appInfo["project_version"];
-              let system_name = osInfo["system_name"];
-              let machine_node = osInfo["machine_node"];
-              let os_cpu_used_rate = osInfo["os_cpu_used_rate"];
-              let os_virtual_mem_used_rate = osInfo["os_virtual_mem_used_rate"];
-              let os_disk_used_rate = osInfo["os_disk_used_rate"];
-              let os_cpu_used_rate_str = osInfo["os_cpu_used_rate_str"];
-              let os_virtual_mem_used_rate_str = osInfo["os_virtual_mem_used_rate_str"];
-              let os_disk_used_rate_str = osInfo["os_disk_used_rate_str"];
-              let os_run_date_str = osInfo["os_run_date_str"];
-              
+              let osInfo = res["osInfo"] || {};
+              let appInfo = res["appInfo"] || {};
+
+              // 字段访问加判空,缺失时显示 "-"
+              let project_version = appInfo["project_version"] || "-";
+              let system_name = osInfo["system_name"] || "-";
+              let machine_node = osInfo["machine_node"] || "-";
+              let os_cpu_used_rate = osInfo["os_cpu_used_rate"] || 0;
+              let os_virtual_mem_used_rate = osInfo["os_virtual_mem_used_rate"] || 0;
+              let os_disk_used_rate = osInfo["os_disk_used_rate"] || 0;
+              let os_cpu_used_rate_str = osInfo["os_cpu_used_rate_str"] || "-";
+              let os_virtual_mem_used_rate_str = osInfo["os_virtual_mem_used_rate_str"] || "-";
+              let os_disk_used_rate_str = osInfo["os_disk_used_rate_str"] || "-";
+              let os_run_date_str = osInfo["os_run_date_str"] || "-";
+
               eleProjectVersion.html("v" + project_version);
               eleOsMachineNode.html(machine_node);
               eleOsSystemName.html(system_name);
@@ -460,10 +642,10 @@
               ele_os_virtual_mem_used_rate.html(os_virtual_mem_used_rate_str);
               ele_os_disk_used_rate.html(os_disk_used_rate_str);
 
-              // 更新迷你进度条
-              let cpuPct = os_cpu_used_rate > 1 ? os_cpu_used_rate : os_cpu_used_rate * 100;
-              let memPct = os_virtual_mem_used_rate > 1 ? os_virtual_mem_used_rate : os_virtual_mem_used_rate * 100;
-              let diskPct = os_disk_used_rate > 1 ? os_disk_used_rate : os_disk_used_rate * 100;
+              // 更新迷你进度条(数值防御)
+              let cpuPct = (os_cpu_used_rate > 1) ? os_cpu_used_rate : os_cpu_used_rate * 100;
+              let memPct = (os_virtual_mem_used_rate > 1) ? os_virtual_mem_used_rate : os_virtual_mem_used_rate * 100;
+              let diskPct = (os_disk_used_rate > 1) ? os_disk_used_rate : os_disk_used_rate * 100;
               $("#cpu_mini_bar").css("width", Math.min(cpuPct, 100) + "%");
               $("#mem_mini_bar").css("width", Math.min(memPct, 100) + "%");
               $("#disk_mini_bar").css("width", Math.min(diskPct, 100) + "%");
@@ -477,7 +659,7 @@
               diskCharts.series[0].addPoint([x, os_disk_used_rate], true, true);
               activeLastPointToolip(diskCharts);
             } catch (e) {
-              console.log(e);
+              console.log("f_openIndex success parse error:", e);
             }
           } else {
             console.log(res.msg);
@@ -489,25 +671,35 @@
       });
     }
 
-    function f_getStatisticsStream() {
+    // 独立的硬件监控数据加载(异步,不阻塞首页其他数据)
+    function f_openHardwareData() {
       $.ajax({
-        url: '/open/getStatisticsStream',
+        url: '/index/openHardwareData',
         type: "get",
         async: true,
         data: {},
         dataType: "json",
         timeout: 0,
         error: function () {
-          myToast2025(_t("online_net_error", "网络异常，请确定网络正常！"), "error");
+          // 网络异常,稍后重试
+          setTimeout(function () {
+            f_openHardwareData();
+          }, 10000);
         },
         success: function (res) {
-          let info = res["info"];
-
-          let html = "<tr><td>{{ T.index_group_count|default:'分组数量' }}</td><td>" + info["groupCount"] + "</td></tr>";
-          html += "<tr><td>{{ T.index_access_count|default:'接入数量' }}</td><td>" + info["count"] + "</td></tr>";
-          html += "<tr><td>{{ T.index_online_count|default:'在线数量' }}</td><td>" + info["forwardCount"] + "</td></tr>";
-
-          eleStreamData.html(html);
+          if (res.code === 1000) {
+            try {
+              let hardwareData = res["hardwareData"] || [];
+              f_updateHardware(hardwareData);
+            } catch (e) {
+              console.log("f_openHardwareData success parse error:", e);
+            }
+          } else {
+            console.log(res.msg);
+          }
+          setTimeout(function () {
+            f_openHardwareData();
+          }, 6000);
         }
       });
     }
@@ -559,7 +751,7 @@
 
     $(function() {
       f_openIndex();
-      f_getStatisticsStream();
+      f_openHardwareData();
       f_getStatisticsControl();
     });
   </script>
