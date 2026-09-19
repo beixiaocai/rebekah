@@ -4,708 +4,1479 @@
 
 {% block stylesheets %}
   {{ block.super }}
-    <link rel="stylesheet" href="/static/lib/jquery/daterangepicker/daterangepicker.min.css"/>
-      <!-- Ion.RangeSlider -->
+  <link rel="stylesheet" href="/static/lib/jquery/daterangepicker/daterangepicker.min.css"/>
   <link href="/static/vendors/normalize-css/normalize.css" rel="stylesheet">
-  <link href="/static/vendors/ion.rangeSlider/css/ion.rangeSlider.css?0908" rel="stylesheet">
-
-{% endblock stylesheets %}
-
-{% block content %}
 <style>
-    video{
-        width: 100%;
-        height: 100%;
-        max-height: 400px;
-        background-color: rgba(0,0,00,1.0);
-        border-radius: 5px;
+    /* ==========================================================================
+       录像播放器 —— 视觉规范对齐首页「控制面板」(app/index.html)
+       底色 #f5f7fa / 白卡片 12px 圆角 / 边框 #e2e8f0 / 主色 #3b82f6
+       ========================================================================== */
+    .right_col { background: #f5f7fa !important; }
+
+    .tp_page { padding-bottom: 20px; }
+
+    /* ===== 卡片 ===== */
+    .tp_card {
+        background: #fff;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+        padding: 18px 20px;
+        margin-bottom: 16px;
+        transition: box-shadow .3s ease, border-color .3s ease;
     }
 
-    video:focus {
-        outline: -webkit-focus-ring-color auto 0;
+    .tp_card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border-color: #cbd5e1;
     }
 
-    /* ===== 一级时间轴：24小时 ===== */
-    .timeline-hour-container {
-        margin-top: 6px;
-        width: 100%;
+    .tp_card-head {
         display: flex;
-        justify-content: flex-start;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+    }
+
+    .tp_card-title {
+        display: flex;
+        align-items: center;
+        font-size: 15px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .tp_card-title i {
+        margin-right: 10px;
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        border-radius: 8px;
+        font-size: 14px;
+        background: rgba(59, 130, 246, 0.08);
+        color: #3b82f6;
+    }
+
+    /* ===== 页头 ===== */
+    .tp_head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        padding: 14px 20px;
+    }
+
+    .tp_head-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .tp_title {
+        display: flex;
+        align-items: center;
+        font-size: 18px;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .tp_title i {
+        margin-right: 10px;
+        width: 34px;
+        height: 34px;
+        line-height: 34px;
+        text-align: center;
+        border-radius: 9px;
+        font-size: 16px;
+        background: rgba(59, 130, 246, 0.08);
+        color: #3b82f6;
+    }
+
+    .tp_code-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        background: #f3f4f6;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        font-size: 12px;
+        color: #6b7280;
+        font-family: Consolas, Monaco, monospace;
+        font-weight: 500;
+    }
+
+    .tp_head-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .tp_loading { display: none; align-items: center; }
+
+    .tp_loading-spinner {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border: 2px solid #e5e7eb;
+        border-top: 2px solid #3b82f6;
+        border-radius: 50%;
+        animation: tp_spin 1s linear infinite;
+        margin-right: 6px;
+        vertical-align: middle;
+    }
+
+    @keyframes tp_spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .tp_loading-text { color: #6b7280; font-size: 13px; }
+
+    .tp_msg {
+        font-size: 13px;
+        color: #2563eb;
+        background: #eff6ff;
+        border: 1px solid #dbeafe;
+        border-radius: 12px;
+        padding: 3px 12px;
+        display: none;
+    }
+
+    .tp_date {
+        width: 148px;
+        height: 36px;
+        padding: 0 12px;
+        font-size: 13px;
+        color: #374151;
+        background: #fff;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        transition: border-color .2s, box-shadow .2s;
+        line-height: 1;
+    }
+
+    .tp_date:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+    }
+
+    /* ===== 视频区 ===== */
+    .tp_video-shell {
+        background: #0b1220;
+        border-radius: 12px;
+        padding: 8px;
+    }
+
+    video {
+        display: block;
+        width: 100%;
+        max-height: 62vh;
+        aspect-ratio: 16 / 9;
+        object-fit: contain;
+        background-color: #000;
+        border-radius: 8px;
+        outline: none;
+    }
+
+    /* ===== 播放控制栏 ===== */
+    .tp_toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin-top: 12px;
+        padding: 10px 12px;
+        background: #f8fafc;
+        border: 1px solid #e8edf3;
+        border-radius: 10px;
+    }
+
+    .tp_btn {
+        height: 34px;
+        padding: 0 13px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #374151;
+        background: #fff;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        white-space: nowrap;
+        line-height: 1;
+        transition: all .2s;
+    }
+
+    .tp_btn:hover {
+        background: #f9fafb;
+        border-color: #3b82f6;
+        color: #3b82f6;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+    }
+
+    .tp_btn.tp_on {
+        background: #eff6ff;
+        border-color: #3b82f6;
+        color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.08);
+    }
+
+    .tp_btn.tp_icon-only { padding: 0 10px; }
+
+    .tp_select {
+        height: 34px;
+        padding: 0 8px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #374151;
+        background: #fff;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all .2s;
+    }
+
+    .tp_select:hover { border-color: #3b82f6; }
+
+    /* ===== 时间轴横向拖拽滑动（一级 / 二级通用）=====
+       隐藏原生滚动条、不劫持滚轮；光标保持默认箭头，不用手型 */
+    .timeline-scroll {
+        overflow-x: auto;
+        user-select: none;
+        scrollbar-width: none;
+    }
+
+    .timeline-scroll::-webkit-scrollbar { display: none; }
+
+    .timeline-track { position: relative; min-width: 1200px; }
+
+    /* 一级轴：24 小时 × 90px 宽轨道，可按住左右拖拽滑动 */
+    #hour_track { min-width: 2160px; }
+
+    /* 轨道内的刻度尺：首尾刻度不再平移半个字，避免被滚动区裁掉 */
+    .timeline-track .timeline-scale span:first-child { transform: none; }
+    /* 末刻度右对齐收进轨道内（文字向左展开），刻度线贴轨道右缘 = 60 分整点位 */
+    .timeline-track .timeline-scale span:last-child { transform: translateX(-100%); }
+    .timeline-track .timeline-scale span:last-child::before { left: auto; right: 0; }
+
+    /* ===== 时间轴悬停提示：完整年月日时分秒 ===== */
+    .tp_tip {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        pointer-events: none;
+        padding: 8px 12px;
+        background: rgba(15, 23, 42, 0.94);
+        border-radius: 8px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+        white-space: nowrap;
+    }
+
+    .tp_tip-time {
+        display: block;
+        font-family: Consolas, 'Courier New', monospace;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: .3px;
+        color: #fff;
+    }
+
+    .tp_tip-sub {
+        display: block;
+        margin-top: 3px;
+        font-size: 11.5px;
+        color: #93c5fd;
+    }
+
+    /* ===== 一级时间轴：一条连续轨道 + 下方刻度尺 ===== */
+    .timeline-hour-wrap { position: relative; }
+
+    .timeline-hour-container {
+        display: flex;
         align-items: stretch;
-        height: 22px;
-        background: #e5e7eb;
-        border-radius: 3px;
+        height: 10px;
+        background: #eef2f7;
+        border-radius: 5px;
         overflow: hidden;
     }
 
     .timeline-hour-container > .hour-item {
+        position: relative;
         flex: 1;
         min-width: 0;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        font-size: 10px;
-        color: #fff;
-        border-right: 1px solid rgba(255,255,255,0.2);
-        transition: all 0.15s ease;
-        position: relative;
+        border-right: 1px solid #fff;
+        transition: filter .15s ease;
         user-select: none;
     }
 
-    .timeline-hour-container > .hour-item:last-child {
-        border-right: none;
-    }
+    .timeline-hour-container > .hour-item:last-child { border-right: none; }
 
-    .hour-item.hour-valid {
-        background: #0e62a7;
-    }
+    .timeline-hour-container > .hour-item:hover { filter: brightness(.93); }
 
-    .hour-item.hour-valid:hover {
-        background: #1a7fd4;
-    }
-
-    .hour-item.hour-partial {
-        background: linear-gradient(90deg, #0e62a7 0%, #0e62a7 var(--valid-pct), #c4a94d var(--valid-pct), #c4a94d 100%);
-    }
-
-    .hour-item.hour-partial:hover {
-        background: linear-gradient(90deg, #1a7fd4 0%, #1a7fd4 var(--valid-pct), #d4be5e var(--valid-pct), #d4be5e 100%);
-    }
-
-    .hour-item.hour-empty {
-        background: #999;
-        color: #ccc;
-    }
+    .hour-bg { position: absolute; top: 0; right: 0; bottom: 0; left: 0; }
 
     .hour-item.hour-selected {
-        outline: 2px solid #f59e0b;
-        outline-offset: -2px;
+        box-shadow: inset 0 0 0 2px #f59e0b;
         z-index: 1;
     }
 
-    /* ===== 二级时间轴：小时内20个切片 ===== */
-    .timeline-segment-container {
-        margin-top: 4px;
-        width: 100%;
-        display: flex;
-        justify-content: flex-start;
-        align-items: stretch;
-        height: 18px;
-        background: #e5e7eb;
-        border-radius: 3px;
-        overflow: hidden;
-        border: 1px solid #d1d5db;
+    .hour-playhead {
+        position: absolute;
+        top: -4px;
+        bottom: -4px;
+        width: 2px;
+        margin-left: -1px;
+        background: #ef4444;
+        border-radius: 1px;
+        box-shadow: 0 0 6px rgba(239, 68, 68, 0.5);
+        pointer-events: none;
+        display: none;
+        z-index: 3;
     }
 
-    .timeline-segment-container > .segment-item {
-        flex: 1;
-        min-width: 0;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        border-right: 1px solid rgba(255,255,255,0.3);
-        transition: all 0.15s ease;
-        user-select: none;
-        position: relative;
+    .hour-playhead::after {
+        content: '';
+        position: absolute;
+        top: -4px;
+        left: -3px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #ef4444;
     }
 
-    .timeline-segment-container > .segment-item:last-child {
-        border-right: none;
-    }
-
-    .segment-item.segment-valid {
-        background: #0e62a7;
-    }
-
-    .segment-item.segment-valid:hover {
-        background: #1a7fd4;
-        transform: scaleY(1.15);
-    }
-
-    .segment-item.segment-empty {
-        background: #d1d5db;
-    }
-
-    .segment-item.segment-empty:hover {
-        background: #bbb;
-    }
-
-    .segment-item.segment-playing {
-        outline: 2px solid #f59e0b;
-        outline-offset: -2px;
-        z-index: 1;
-    }
-
-    /* 二级时间轴标签行 */
-    .timeline-segment-labels {
-        display: flex;
-        justify-content: flex-start;
-        align-items: stretch;
-        width: 100%;
-        margin-top: 2px;
-        height: 16px;
-    }
-
-    .timeline-segment-labels > .segment-label {
-        flex: 1;
-        min-width: 0;
-        text-align: center;
-        font-size: 9px;
-        color: #9ca3af;
-        overflow: hidden;
-        white-space: nowrap;
-    }
-
-    /* 二级时间轴标题 */
-    .timeline-segment-header {
-        margin-top: 8px;
-        font-size: 12px;
-        color: #6b7280;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    /* 时间刻度尺 */
+    /* 刻度尺：数字带一条小刻度线，与轨道位置对齐 */
     .timeline-scale {
         display: flex;
         justify-content: space-between;
         width: 100%;
-        margin-top: 4px;
+        margin-top: 6px;
         font-size: 11px;
-        color: #9ca3af;
+        color: #94a3b8;
+        font-family: Consolas, 'Courier New', monospace;
     }
 
     .timeline-scale span {
-        text-align: center;
+        position: relative;
+        transform: translateX(-50%);
+        padding-top: 8px;
+        line-height: 1;
     }
 
-    /* 时间轴图例 */
-    .timeline-legend {
+    .timeline-scale span::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 1px;
+        height: 5px;
+        background: #cbd5e1;
+    }
+
+    /* ===== 二级时间轴：小时内切片 ===== */
+    .timeline-segment-header {
+        margin-top: 16px;
+        font-size: 12.5px;
+        color: #64748b;
         display: flex;
-        justify-content: flex-start;
+        justify-content: space-between;
         align-items: center;
-        gap: 20px;
+        gap: 12px;
+    }
+
+    .timeline-segment-count {
+        background: #eff6ff;
+        color: #2563eb;
+        border-radius: 10px;
+        padding: 1px 9px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .timeline-segment-container {
         margin-top: 8px;
-        font-size: 12px;
-        color: #6b7280;
+        display: flex;
+        align-items: stretch;
+        height: 18px;
+        background: #eef2f7;
+        border-radius: 9px;
+        overflow: hidden;
     }
 
-    .timeline-legend-item {
+    .timeline-segment-container > .segment-item {
+        position: relative;
+        flex: 1;
+        min-width: 0;
+        border-right: 1px solid #fff;
+        transition: filter .15s ease;
+        user-select: none;
+    }
+
+    .timeline-segment-container > .segment-item:last-child { border-right: none; }
+    .timeline-segment-container > .segment-item:hover { filter: brightness(.93); }
+
+    .segment-item.segment-valid { background: #3b82f6; }
+    .segment-item.segment-empty { background: #e5e7eb; }
+
+    .segment-item.segment-playing {
+        box-shadow: inset 0 0 0 2px #f59e0b;
+        z-index: 1;
+    }
+
+    .segment-item .seg-progress {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 0;
+        background: rgba(251, 191, 36, 0.9);
+        pointer-events: none;
+    }
+
+    /* 时间轴卡片右上角的「切片粒度」小字 */
+    .tp_slice-note { font-size: 12px; color: #94a3b8; }
+    .tp_slice-note b { color: #64748b; font-weight: 600; }
+
+    /* ===== 空态 / 错误态 ===== */
+    .tp_empty {
+        display: none;
+        padding: 46px 16px;
+        text-align: center;
+        color: #9ca3af;
+        font-size: 13px;
+        background: #f9fafb;
+        border: 1px dashed #dbe1e8;
+        border-radius: 10px;
+        margin-top: 14px;
+    }
+
+    .tp_empty i {
+        display: block;
+        font-size: 28px;
+        margin-bottom: 10px;
+        color: #d1d5db;
+    }
+
+    /* ===== 分享 / 下载 ===== */
+    .tp_addr-row {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 10px;
+        flex-wrap: wrap;
     }
 
-    .timeline-legend-color {
-        width: 16px;
-        height: 12px;
-        border-radius: 2px;
+    .tp_addr-input {
+        flex: 1;
+        min-width: 240px;
+        height: 38px;
+        padding: 0 14px;
+        font-size: 13px;
+        color: #374151;
+        background: #fff;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-family: Consolas, 'Courier New', monospace;
+        transition: border-color .2s, box-shadow .2s;
     }
 
-    .timeline-legend-color.valid {
-        background: #0e62a7;
+    .tp_addr-input:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
     }
 
-    .timeline-legend-color.partial {
-        background: #c4a94d;
-    }
-
-    .timeline-legend-color.invalid {
-        background: #d1d5db;
-    }
-
-    /* 美化 ion-rangeSlider 时间进度条 */
-    .irs--round .irs-bar {
-        background: linear-gradient(to right, #3b82f6 0%, #2563eb 100%);
-        height: 6px;
-    }
-
-    .irs--round .irs-line {
-        background: #e5e7eb;
-        border-radius: 3px;
-        height: 6px;
-    }
-
-    .irs--round .irs-handle {
-        width: 18px;
-        height: 18px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: white;
-        border: 3px solid #3b82f6;
-        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
-    }
-
-    .irs--round .irs-handle:hover {
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
-    }
-
-    .irs--round .irs-from,
-    .irs--round .irs-to,
-    .irs--round .irs-single {
+    .tp_btn-primary {
         background: #3b82f6;
-        color: white;
-        font-size: 12px;
-        padding: 2px 8px;
-        border-radius: 4px;
+        border-color: #3b82f6;
+        color: #fff;
     }
 
-    .irs--round .irs-grid-pol {
-        background: #d1d5db;
+    .tp_btn-primary:hover {
+        background: #2563eb;
+        border-color: #2563eb;
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
     }
 
-    .irs--round .irs-grid-text {
-        color: #6b7280;
-        font-size: 11px;
+    .tp_btn:disabled {
+        opacity: .45;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+        background: #fff;
+        border-color: #d1d5db;
+        color: #374151;
     }
 
-    .irs--round .irs-min,
-    .irs--round .irs-max {
-        background: #f3f4f6;
-        color: #6b7280;
-        border-radius: 4px;
-        padding: 2px 6px;
-        font-size: 11px;
+    /* 地址行：去掉卡片标题，一行解决 */
+    .tp_addr-card { padding: 12px 16px; }
+
+    /* ===== 响应式 ===== */
+    @media (max-width: 768px) {
+        .tp_card { padding: 14px; }
+        .timeline-hour-container { height: 14px; }
     }
-  </style>
+</style>
+{% endblock stylesheets %}
 
 
+{% block content %}
   <div class="right_col" role="main">
-    <div class="">
-      <div class="row">
-        <div class="col-md-12 col-sm-12 col-xs-12">
-          <div class="x_panel">
-            <div class="x_title">
-                 <h2>{{ T.timeplayer_title|default:'录像播放器' }}
-                    <span id="top_loading" ><img class="top_loading_img" src="/static/images/load.gif" alt="loading">{{ T.timeplayer_loading|default:'加载中' }}</span>
-                    <span id="top_msg">{{top_msg}}</span>
-                 </h2>
+    <div class="tp_page">
 
-                    <div style="float: right; margin-top: 6px; margin-right: 50px;">
-                         <input type="text" style="width: 120px;height: 30px;"  id="record_date" class="form-control">
-                    </div>
+      <!-- 页头 -->
+      <div class="tp_card tp_head">
+        <div class="tp_head-left">
+          <div class="tp_title">
+            <i class="fa fa-film"></i>
+            <span>{{ T.timeplayer_title|default:'录像播放器' }}</span>
+          </div>
+          <span class="tp_code-badge" title="{{ T.timeplayer_record_code|default:'录像编号' }}">{{ code }}</span>
+          <span class="tp_code-badge">{{ T.timeplayer_keep_days|default:'保存' }} {{ record_day }} {{ T.timeplayer_day_unit|default:'天' }}</span>
+        </div>
+        <div class="tp_head-right">
+          <span id="top_loading" class="tp_loading">
+            <span class="tp_loading-spinner"></span>
+            <span class="tp_loading-text">{{ T.timeplayer_loading|default:'加载中' }}</span>
+          </span>
+          <span id="top_msg" class="tp_msg"></span>
+          <input type="text" id="record_date" class="tp_date">
+        </div>
+      </div>
 
-                  <div class="clearfix"></div>
+      <!-- 播放器 -->
+      <div class="tp_card">
+        <div class="tp_video-shell">
+          <video id="video_player" poster="/static/images/player_poster.jpg" muted controls>
+            Your browser is too old which doesn't support HTML5 video.
+          </video>
+        </div>
+
+        <!-- 播放控制栏 -->
+        <div class="tp_toolbar">
+          <button type="button" class="tp_btn" id="btn_play" onclick="f_togglePlay()" title="{{ T.timeplayer_play_pause|default:'播放/暂停（空格）' }}">
+            <i class="fa fa-play"></i> <span id="play_text">{{ T.timeplayer_play|default:'播放' }}</span>
+          </button>
+
+          <button type="button" class="tp_btn tp_icon-only" onclick="f_playRelativeSegment(-1)" title="{{ T.timeplayer_prev_segment|default:'上一段（↑）' }}">
+            <i class="fa fa-step-backward"></i>
+          </button>
+          <button type="button" class="tp_btn tp_icon-only" onclick="f_playRelativeSegment(1)" title="{{ T.timeplayer_next_segment|default:'下一段（↓）' }}">
+            <i class="fa fa-step-forward"></i>
+          </button>
+
+          <select class="tp_select" id="play_rate" onchange="f_changeRate(this.value)" title="{{ T.timeplayer_speed|default:'播放速度' }}">
+            <option value="0.5">0.5x</option>
+            <option value="1" selected>1.0x</option>
+            <option value="2">2.0x</option>
+            <option value="4">4.0x</option>
+            <option value="8">8.0x</option>
+          </select>
+
+          <button type="button" class="tp_btn" id="btn_sound" onclick="f_toggleSound()" title="{{ T.timeplayer_sound|default:'声音' }}">
+            <i class="fa fa-volume-off"></i> <span id="sound_text">{{ T.timeplayer_sound_off|default:'静音' }}</span>
+          </button>
+
+          <button type="button" class="tp_btn" id="btn_continue" onclick="f_toggleContinue()" title="{{ T.timeplayer_continue_hint|default:'开启后一段播完会自动接着下一段' }}">
+            <i class="fa fa-exchange"></i> <span id="continue_text">{{ T.timeplayer_continue_off|default:'单段播放' }}</span>
+          </button>
+
+          <button type="button" class="tp_btn" onclick="f_takeSnapshot()" title="{{ T.timeplayer_snapshot|default:'截图（S）' }}">
+            <i class="fa fa-camera"></i> {{ T.timeplayer_snapshot|default:'截图' }}
+          </button>
+
+          <button type="button" class="tp_btn tp_icon-only" onclick="f_toggleFullscreen()" title="{{ T.timeplayer_fullscreen|default:'全屏（F）' }}">
+            <i class="fa fa-arrows-alt"></i>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- 时间轴：宽轨道，可按住左右拖拽滑动 -->
+      <div class="tp_card">
+        <div class="tp_card-head">
+          <div class="tp_card-title">
+            <i class="fa fa-clock-o"></i>
+            <span>{{ T.timeplayer_timeline|default:'录像时间轴' }}</span>
+          </div>
+          <span class="tp_slice-note">{{ T.timeplayer_slice|default:'切片粒度' }} <b id="slice_granularity">--</b></span>
+        </div>
+
+        <!-- 一级时间轴：24 小时宽轨道（2160px），可按住左右拖拽滑动 -->
+        <div class="timeline-scroll" id="timeline_hour_scroll">
+          <div class="timeline-track" id="hour_track">
+            <div class="timeline-hour-wrap">
+              <div class="timeline-hour-container" id="timeline_hour_container"></div>
+              <div class="hour-playhead" id="hour_playhead"></div>
             </div>
-
-            <div class="x_content">
-
-            <div class="col-md-12 col-sm-12 col-xs-12">
-                   <video id="video_player" poster="/static/images/player_poster.jpg" muted controls>
-                       Your browser is too old which doesn't support HTML5 video.
-                    </video>
-              </div>
-
-                 <div class="col-md-12 col-sm-12 col-xs-12">
-                     <div id="timeline_div">
-                     </div>
-                   </div>
-
-              <!-- 一级时间轴：24小时 -->
-              <div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="timeline-hour-container" id="timeline_hour_container">
-                  </div>
-                <div class="timeline-scale" id="timeline_scale">
-                    <span>00</span>
-                    <span>04</span>
-                    <span>08</span>
-                    <span>12</span>
-                    <span>16</span>
-                    <span>20</span>
-                    <span>24</span>
-                  </div>
-              </div>
-
-              <!-- 二级时间轴：小时内切片 -->
-              <div class="col-md-12 col-sm-12 col-xs-12" id="timeline_segment_section" style="display:none;">
-                <div class="timeline-segment-header">
-                    <span id="segment_header_text"></span>
-                    <span id="segment_header_count" style="color:#0e62a7;"></span>
-                </div>
-                <div class="timeline-segment-container" id="timeline_segment_container">
-                  </div>
-                <div class="timeline-segment-labels" id="timeline_segment_labels">
-                  </div>
-              </div>
-
-                <!-- 图例 -->
-                <div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="timeline-legend">
-                    <div class="timeline-legend-item">
-                      <div class="timeline-legend-color valid"></div>
-                      <span>{{ T.timeplayer_recorded|default:'已录像' }}</span>
-                    </div>
-                    <div class="timeline-legend-item">
-                      <div class="timeline-legend-color partial"></div>
-                      <span>{{ T.timeplayer_partial_recorded|default:'部分录像' }}</span>
-                    </div>
-                    <div class="timeline-legend-item">
-                      <div class="timeline-legend-color invalid"></div>
-                      <span>{{ T.timeplayer_not_recorded|default:'无录像' }}</span>
-                    </div>
-                  </div>
-              </div>
-
-                <div class="col-md-12 col-sm-12 col-xs-12" style="margin-top: 30px;">
-                     <div class="form-horizontal form-label-left" >
-                        <div class="form-group">
-                          <div class="col-md-4 col-sm-4 col-xs-12">
-                             <input type="text"  class="form-control" id="record_video_address" placeholder="{{ T.timeplayer_current_address|default:'当前录像播放地址' }}">
-                          </div>
-                            <button type="button" onclick="f_downloadRecordVideo()" class="btn btn-dark">{{ T.timeplayer_download|default:'下载' }}</button>
-                        </div>
-                     </div>
-
-                </div>
+            <div class="timeline-scale" id="timeline_scale">
+              <span>00</span>
+              <span>04</span>
+              <span>08</span>
+              <span>12</span>
+              <span>16</span>
+              <span>20</span>
+              <span>24</span>
             </div>
           </div>
         </div>
+
+        <div class="tp_empty" id="timeline_empty">
+          <i class="fa fa-clock-o"></i>
+          <span id="timeline_empty_text"></span>
+        </div>
+
+        <!-- 二级时间轴：小时内切片，空间不够时可按住左右拖拽（无滚动条） -->
+        <div id="timeline_segment_section" style="display:none;">
+          <div class="timeline-segment-header">
+            <span id="segment_header_text"></span>
+            <span class="timeline-segment-count" id="segment_header_count"></span>
+          </div>
+          <div class="timeline-scroll" id="timeline_scroll">
+            <div class="timeline-track" id="segment_track">
+              <div class="timeline-segment-container" id="timeline_segment_container"></div>
+              <div class="timeline-scale">
+                <span>0</span>
+                <span>15</span>
+                <span>30</span>
+                <span>45</span>
+                <span>60{{ T.timeplayer_minute_unit|default:' 分' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 悬停提示：显示片段完整年月日时分秒 -->
+        <div class="tp_tip" id="tp_tip"></div>
       </div>
+
+      <!-- 分享 / 下载 -->
+      <div class="tp_card tp_addr-card">
+        <div class="tp_addr-row">
+          <input type="text" class="tp_addr-input" id="record_video_address" placeholder="{{ T.timeplayer_address_placeholder|default:'播放一段录像后可复制或下载该片段' }}">
+          <button type="button" class="tp_btn" id="btn_copy" onclick="f_copyAddress()" disabled>
+            <i class="fa fa-clipboard"></i> {{ T.timeplayer_copy|default:'复制' }}
+          </button>
+          <button type="button" class="tp_btn tp_btn-primary" id="btn_download" onclick="f_downloadRecordVideo()" disabled>
+            <i class="fa fa-download"></i> {{ T.timeplayer_download|default:'下载' }}
+          </button>
+        </div>
+      </div>
+
     </div>
   </div>
 {% endblock content %}
 
+
 {% block javascripts %}
   {{ block.super }}
-   <!-- daterangepicker -->
-<script src="/static/vendors/moment/min/moment.min.js"></script>
-<script src="/static/lib/jquery/daterangepicker/jquery.daterangepicker.js"></script>
-  <!-- Ion.RangeSlider -->
-  <script src="/static/vendors/ion.rangeSlider/js/ion.rangeSlider.min.js?0908"></script>
+  <!-- daterangepicker -->
+  <script src="/static/vendors/moment/min/moment.min.js"></script>
+  <script src="/static/lib/jquery/daterangepicker/jquery.daterangepicker.js"></script>
 <script>
 
     let record_code = '{{ code }}';
-    let record_day = parseInt('{{ record_day }}');
-    let current_date = new Date();
-    let current_day = current_date.getDate();
+    let record_day = parseInt('{{ record_day }}') || 0;
 
+    let eleVideoPlayerJsObj = document.getElementById("video_player");
+    let eleVideoPlayerJqueryObj = $("#video_player");
     let eleInputRecordDate = $('#record_date');
-    let eleInputTimelineDiv = $("#timeline_div");
-    let eleVideoPlayerJsObj = document.getElementById("video_player")
-    let eleVideoPlayerJqueryObj = $("#video_player")
     let eleHourContainer = $("#timeline_hour_container");
+    let eleHourPlayhead = $("#hour_playhead");
     let eleSegmentSection = $("#timeline_segment_section");
     let eleSegmentContainer = $("#timeline_segment_container");
-    let eleSegmentLabels = $("#timeline_segment_labels");
     let eleSegmentHeaderText = $("#segment_header_text");
     let eleSegmentHeaderCount = $("#segment_header_count");
     let eleInputRecordVideoAddress = $("#record_video_address");
+    let eleTopLoading = $("#top_loading");
+    let eleTopMsg = $("#top_msg");
+    let eleTimelineEmpty = $("#timeline_empty");
+    let eleBtnDownload = $("#btn_download");
+    let eleBtnCopy = $("#btn_copy");
+    let eleSliceGranularity = $("#slice_granularity");
 
-    // 连续播放相关变量
-    let currentTimestamp = 0;
-    let isAutoContinue = true;
-    let recordTimelineData = []; // 当前日期的录像时间线数据
-    let selectedHour = -1; // 当前选中的小时
-    let playingSegmentIndex = -1; // 当前播放的切片序号
+    // ===== 运行状态 =====
+    let recordTimelineData = [];        // 当前日期的 24 小时切片数据 [{hour, segments:[0/1]}]
+    let segmentSecond = 180;            // 单个切片时长（秒），由后端返回的切片数量推导
+    let currentDateForTimeline = new Date();
+    let selectedHour = -1;              // 二级时间轴当前展示的小时
+    let clipStartTimestamp = 0;         // 当前片段真实起始时间戳（回放锚点）
+    let clipDuration = 0;               // 当前片段真实时长（秒）
+    let clipUrl = "";                   // 当前片段播放地址
+    let pendingSeekOffset = 0;          // 需要在片段内部 seek 到的偏移秒数
+    // 连续播放默认关闭：跨片段衔接依赖「按文件名时间戳找下一段」，
+    // 一旦时间轴数据与实际文件不一致就可能卡住，因此改为用户显式开启。
+    let isContinue = false;
+    let playRate = parseFloat(localStorage.getItem("tp_rate")) || 1;
+    let playVolume = parseFloat(localStorage.getItem("tp_volume"));
+    if (isNaN(playVolume)) { playVolume = 1; }
+    let isMuted = localStorage.getItem("tp_muted") !== "0";   // 默认静音，浏览器才允许自动播放
 
-    // 录像切片参数，与后端 RecordWorker.RECORD_SEGMENT_SECOND 保持一致
-    const RECORD_SEGMENT_SECOND = 180;
-    const SEGMENT_PER_HOUR = 20;
+    const COLOR_VALID = "#3b82f6";
+    const COLOR_EMPTY = "#e5e7eb";
 
-    // 监听视频播放结束事件，实现连续播放
-    eleVideoPlayerJsObj.addEventListener('ended', function() {
-        if (isAutoContinue && currentTimestamp > 0) {
-            let nextTimestamp = currentTimestamp + RECORD_SEGMENT_SECOND;
+    function p2(n) { return String(n).padStart(2, '0'); }
 
-            let currentDateObj = new Date(currentTimestamp * 1000);
-            let maxTimestamp = new Date(
-                currentDateObj.getFullYear(),
-                currentDateObj.getMonth(),
-                currentDateObj.getDate(),
-                23, 59, 59
-            ).valueOf() / 1000;
+    function f_fmtDateTime(ts) {
+        let d = new Date(ts * 1000);
+        return d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()) + ' '
+             + p2(d.getHours()) + ':' + p2(d.getMinutes()) + ':' + p2(d.getSeconds());
+    }
 
-            if (nextTimestamp <= maxTimestamp) {
-                f_openRecordFilename(nextTimestamp);
-            } else {
-                console.log('已达当天最后一个片段，停止播放');
+    function f_fmtDay(d) {
+        return d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate());
+    }
+
+    function f_showLoading(isShow) {
+        if (isShow) { eleTopLoading.css("display", "inline-flex"); }
+        else { eleTopLoading.hide(); }
+    }
+
+    function f_setTopMsg(msg) {
+        eleTopMsg.text(msg || "");
+        if (msg) { eleTopMsg.css("display", "inline-block"); } else { eleTopMsg.hide(); }
+    }
+
+    // ===== URL 状态：让「某段录像」可以被分享 =====
+    function f_syncUrl(hour) {
+        let url = "/streamRecord/index?access=timeplayer&code=" + encodeURIComponent(record_code)
+                + "&date=" + f_fmtDay(currentDateForTimeline);
+        if (hour >= 0) { url += "&hour=" + hour; }
+        // 当前地址带 lang 时保留，避免 replaceState 后语言回落到默认
+        let lang = new URLSearchParams(window.location.search).get("lang");
+        if (lang) { url += "&lang=" + encodeURIComponent(lang); }
+        try { history.replaceState(null, "", url); } catch (e) {}
+    }
+
+    function f_readUrlState() {
+        let state = { date: null, hour: -1 };
+        let sp = new URLSearchParams(window.location.search);
+        let dateStr = sp.get("date");
+        if (dateStr) {
+            let d = new Date(dateStr + "T00:00:00");
+            if (!isNaN(d.valueOf())) { state.date = d; }
+        }
+        let h = parseInt(sp.get("hour"));
+        if (!isNaN(h) && h >= 0 && h <= 23) { state.hour = h; }
+        return state;
+    }
+
+    // ===== 时间轴数据工具 =====
+    function f_getHourData(hour) {
+        for (let i = 0; i < recordTimelineData.length; i++) {
+            if (recordTimelineData[i].hour === hour) { return recordTimelineData[i]; }
+        }
+        return null;
+    }
+
+    function f_sliceMinute() { return segmentSecond / 60; }
+
+    function f_segmentTimestamp(hour, segIndex) {
+        let d = new Date(currentDateForTimeline);
+        d.setHours(hour, Math.round(segIndex * f_sliceMinute()), 0, 0);
+        return Math.floor(d.valueOf() / 1000);
+    }
+
+    function f_segmentOf(timestamp) {
+        let d = new Date(timestamp * 1000);
+        return { hour: d.getHours(), seg: Math.floor(d.getMinutes() / f_sliceMinute()) };
+    }
+
+    // 从 (hour, segIndex) 的相邻切片开始，向后(dir=1)/向前(dir=-1)找第一个有录像的切片
+    // 录像过程会因 ffmpeg 超时、服务重启等留下空洞，靠它跳过空洞继续播放
+    function f_findNeighborSegment(hour, segIndex, dir) {
+        for (let h = hour; h >= 0 && h < 24; h += dir) {
+            let hourData = f_getHourData(h);
+            if (!hourData) { continue; }
+
+            let end = hourData.segments.length - 1;
+            let from = (h === hour) ? (segIndex + dir) : (dir > 0 ? 0 : end);
+            for (let s = from; s >= 0 && s <= end; s += dir) {
+                if (hourData.segments[s] === 1) {
+                    return { hour: h, seg: s };
+                }
             }
         }
+        return null;
+    }
+
+    // 按切片真实位置生成渐变，避免「已录像/无录像」在时间轴上的位置被画错
+    function f_buildSegGradient(segments) {
+        let n = segments.length;
+        let stops = [];
+        for (let i = 0; i < n; i++) {
+            let c = (segments[i] === 1) ? COLOR_VALID : COLOR_EMPTY;
+            stops.push(c + " " + (i * 100 / n).toFixed(4) + "%");
+            stops.push(c + " " + ((i + 1) * 100 / n).toFixed(4) + "%");
+        }
+        return "linear-gradient(90deg," + stops.join(",") + ")";
+    }
+
+    // ===== 一级时间轴 =====
+    function f_renderHourBar() {
+        let html = "";
+        for (let i = 0; i < recordTimelineData.length; i++) {
+            let hour = recordTimelineData[i].hour;
+            let segments = recordTimelineData[i].segments;
+            let validCount = 0;
+            for (let s = 0; s < segments.length; s++) {
+                if (segments[s] === 1) { validCount++; }
+            }
+
+            html += "<div class='hour-item' data-hour='" + hour + "' "
+                  + "onclick='f_clickHour(" + hour + ")'>"
+                  + "<div class='hour-bg' style='background:" + f_buildSegGradient(segments) + ";'></div>"
+                  + "</div>";
+        }
+        eleHourContainer.html(html);
+    }
+
+    // 切片粒度：由后端返回的切片数量推导，帮助用户理解时间轴每一格的跨度
+    function f_updateSliceGranularity() {
+        eleSliceGranularity.text(Math.round(segmentSecond / 60) + _t("timeplayer_slice_unit", " 分钟/格"));
+    }
+
+    // ===== 二级时间轴 =====
+    function f_selectHour(hour) {
+        selectedHour = hour;
+
+        $(".hour-item").removeClass("hour-selected");
+        $(".hour-item[data-hour='" + hour + "']").addClass("hour-selected");
+
+        let hourData = f_getHourData(hour);
+        if (!hourData) { return; }
+
+        let segments = hourData.segments;
+        let validCount = 0;
+        let html = "";
+        for (let s = 0; s < segments.length; s++) {
+            let isValid = segments[s] === 1;
+            if (isValid) { validCount++; }
+
+            html += "<div class='segment-item " + (isValid ? "segment-valid" : "segment-empty") + "' "
+                  + "data-seg-index='" + s + "' "
+                  + "onclick='f_clickSegment(" + hour + "," + s + ")'></div>";
+        }
+        eleSegmentContainer.html(html);
+
+        // 格子下限 40px：容器放得下就铺满（无拖拽、末格不被裁），
+        // 只有窗口窄到 40px/格都放不下时才出现横向拖拽
+        $("#segment_track").css("min-width", (segments.length * 40) + "px");
+
+        // 末段结束时间是下一小时整点（23 点则是 24:00）
+        let endHourLabel = (hour + 1) > 23 ? "24:00" : p2(hour + 1) + ":00";
+        eleSegmentHeaderText.text(f_fmtDay(currentDateForTimeline) + " " + p2(hour) + ":00 - " + endHourLabel);
+        eleSegmentHeaderCount.text(validCount + "/" + segments.length);
+
+        eleSegmentSection.show();
+        f_ensureHourVisible(hour);   // 选中的小时不在一级轴视野时，自动带回
+        f_focusSegment();
+        f_syncUrl(hour);
+    }
+
+    // 点击切片：有录像才播放；没有则明确提示，不用其他片段替代
+    function f_clickSegment(hour, segIndex) {
+        let hourData = f_getHourData(hour);
+        if (hourData && hourData.segments[segIndex] === 1) {
+            f_openRecordFilename(f_segmentTimestamp(hour, segIndex));
+            return;
+        }
+        myToast2025(_t("timeplayer_no_record_point", "该时间点没有录像"), "warning");
+    }
+
+    // 点击一级轴：切换二级轴到该小时，并播放该小时内第一段有录像的片段；
+    // 整小时无录像则明确提示，不用其他片段替代
+    function f_clickHour(hour) {
+        f_selectHour(hour);
+        let hourData = f_getHourData(hour);
+        let firstSeg = -1;
+        if (hourData) {
+            for (let s = 0; s < hourData.segments.length; s++) {
+                if (hourData.segments[s] === 1) { firstSeg = s; break; }
+            }
+        }
+        if (firstSeg >= 0) {
+            f_openRecordFilename(f_segmentTimestamp(hour, firstSeg));
+            return;
+        }
+        myToast2025(_t("timeplayer_no_record_point", "该时间点没有录像"), "warning");
+    }
+
+    // ===== 时间轴左右拖拽滑动（一级 / 二级通用）=====
+    // 隐藏滚动条、不劫持滚轮；空间不够时按住即可平移，光标保持默认箭头
+    let eleHourScrollDom = document.getElementById("timeline_hour_scroll");
+    let eleScrollDom = document.getElementById("timeline_scroll");
+    let eleTipDom = document.getElementById("tp_tip");
+    let suppressClick = false;      // 拖拽结束后的那次 click 不应触发选段
+    let dragState = null;           // { el, startX, startScroll, moved }
+
+    function f_bindDrag(el) {
+        if (!el) { return; }
+        el.addEventListener("mousedown", function (e) {
+            if (e.button !== 0) { return; }
+            // 放得下就铺满，无需拖拽，也不拦截点击
+            if (el.scrollWidth <= el.clientWidth + 1) { return; }
+            dragState = { el: el, startX: e.clientX, startScroll: el.scrollLeft, moved: false };
+        });
+        // 拖拽后拦截 click（捕获阶段），避免滑动误选片段
+        el.addEventListener("click", function (e) {
+            if (suppressClick) { e.stopPropagation(); e.preventDefault(); }
+        }, true);
+    }
+    f_bindDrag(eleHourScrollDom);
+    f_bindDrag(eleScrollDom);
+
+    document.addEventListener("mousemove", function (e) {
+        if (!dragState) { return; }
+        let dx = e.clientX - dragState.startX;
+        if (Math.abs(dx) > 4) {
+            if (!dragState.moved) { dragState.moved = true; f_hideTip(); }
+            dragState.el.scrollLeft = dragState.startScroll - dx;
+        }
+    });
+    document.addEventListener("mouseup", function () {
+        if (!dragState) { return; }
+        if (dragState.moved) {
+            suppressClick = true;
+            setTimeout(function () { suppressClick = false; }, 0);
+        }
+        dragState = null;
     });
 
-    eleInputRecordDate.val(current_date.toLocaleDateString())
-
-    function f_downloadRecordVideo() {
-        let url = eleInputRecordVideoAddress.val().trim();
-        if(url.startsWith("/storage/openAccess?filename=")){
-            window.open(url);
-        }else{
-               myToast2025(_t("timeplayer_address_invalid", "录像播放地址不正确！"),"error");
+    // 让目标点进入某条轴的可视区；已在视野内则不动（不跟用户抢滚动条）
+    function f_ensureVisible(el, centerPx) {
+        if (!el || !(el.scrollWidth > el.clientWidth)) { return; }
+        if (centerPx < el.scrollLeft || centerPx > el.scrollLeft + el.clientWidth) {
+            el.scrollLeft = Math.max(0, Math.min(centerPx - el.clientWidth / 2, el.scrollWidth - el.clientWidth));
         }
     }
 
-    function f_openRecordFilename(timestamp){
-        eleInputRecordVideoAddress.val("");
-        currentTimestamp = timestamp;
+    // 选中小时在一级轴上可见（首次打开 URL 带小时时自动定位）
+    function f_ensureHourVisible(hour) {
+        f_ensureVisible(eleHourScrollDom, (hour + 0.5) / 24 * eleHourScrollDom.scrollWidth);
+    }
 
-        // 更新二级时间轴中播放状态高亮
-        f_updatePlayingSegment(timestamp);
+    // ===== 时间轴悬停提示：完整年月日时分秒 =====
+    function f_moveTip(e) {
+        if (!eleTipDom || eleTipDom.style.display !== "block") { return; }
+        let pad = 12;
+        let w = eleTipDom.offsetWidth, h = eleTipDom.offsetHeight;
+        let x = e.clientX + pad, y = e.clientY - h - 10;
+        if (x + w > window.innerWidth - 8) { x = e.clientX - w - pad; }
+        if (y < 8) { y = e.clientY + 14; }
+        eleTipDom.style.left = x + "px";
+        eleTipDom.style.top = y + "px";
+    }
+
+    function f_showTip(e, timeText, subText) {
+        if (!eleTipDom) { return; }
+        eleTipDom.innerHTML = "<span class='tp_tip-time'>" + timeText + "</span>"
+                            + (subText ? "<span class='tp_tip-sub'>" + subText + "</span>" : "");
+        eleTipDom.style.display = "block";
+        f_moveTip(e);
+    }
+
+    function f_hideTip() {
+        if (eleTipDom) { eleTipDom.style.display = "none"; }
+    }
+
+    // 悬停一级时间轴：该小时区间 + 录像概况
+    eleHourContainer.on("mouseenter", ".hour-item", function (e) {
+        if (dragState) { return; }
+        let hour = parseInt($(this).attr("data-hour"));
+        let hourData = f_getHourData(hour);
+        if (!hourData) { return; }
+        let segs = hourData.segments, valid = 0;
+        for (let s = 0; s < segs.length; s++) { if (segs[s] === 1) { valid++; } }
+        let sub = valid === 0 ? _t("timeplayer_not_recorded", "无录像")
+                : (valid === segs.length ? _t("timeplayer_all_recorded", "全部已录像")
+                                         : _t("timeplayer_partial_recorded", "部分录像") + " (" + valid + "/" + segs.length + ")");
+        // 日期只出现一次：2026-09-17 04:00 – 05:00（23 点收尾为 24:00）
+        f_showTip(e, f_fmtDay(currentDateForTimeline) + " " + p2(hour) + ":00 – " + p2(hour + 1) + ":00", sub);
+    });
+    eleHourContainer.on("mousemove", ".hour-item", f_moveTip);
+    eleHourContainer.on("mouseleave", ".hour-item", f_hideTip);
+
+    // 悬停二级时间轴：该片段的完整年月日时分秒（点击前就能看到精确时间）
+    eleSegmentContainer.on("mouseenter", ".segment-item", function (e) {
+        if (dragState) { return; }
+        let idx = parseInt($(this).attr("data-seg-index"));
+        if (isNaN(idx) || selectedHour < 0) { return; }
+        let startTs = f_segmentTimestamp(selectedHour, idx);
+        let sub = $(this).hasClass("segment-empty")
+            ? _t("timeplayer_not_recorded", "无录像")
+            : _t("timeplayer_click_play", "点击播放");
+        f_showTip(e, f_fmtDateTime(startTs) + " – " + f_fmtTimeTs(startTs + segmentSecond), sub);
+    });
+    eleSegmentContainer.on("mousemove", ".segment-item", f_moveTip);
+    eleSegmentContainer.on("mouseleave", ".segment-item", f_hideTip);
+
+    // 高亮播放所在的切片，必要时切换二级时间轴的小时
+    function f_focusSegment() {
+        let pos = clipStartTimestamp ? f_segmentOf(clipStartTimestamp) : null;
+
+        if (pos && pos.hour !== selectedHour) {
+            f_selectHour(pos.hour);   // 内部会再回调本函数完成高亮
+            return;
+        }
+
+        $(".segment-item").removeClass("segment-playing").find(".seg-progress").remove();
+        if (!pos) { return; }
+
+        let $seg = $(".segment-item[data-seg-index='" + pos.seg + "']");
+        if ($seg.length) {
+            $seg.addClass("segment-playing").append("<div class='seg-progress'></div>");
+        }
+
+        // 换段时若红色播放头不在一级轴视野内，自动带回（片段播放中不抢用户的滚动）
+        if (clipStartTimestamp && eleHourScrollDom) {
+            let wallTs = clipStartTimestamp + (eleVideoPlayerJsObj.currentTime || 0);
+            let d = new Date(wallTs * 1000);
+            let daySecond = d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds();
+            f_ensureVisible(eleHourScrollDom, daySecond / 86400 * eleHourScrollDom.scrollWidth);
+        }
+    }
+
+    // 播放头：把「片段内已播秒数」换算成轨道上的位置
+    function f_updatePlayhead() {
+        if (!clipStartTimestamp) { return; }
+        let wallTs = clipStartTimestamp + eleVideoPlayerJsObj.currentTime;
+        let d = new Date(wallTs * 1000);
+
+        let daySecond = d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds();
+        eleHourPlayhead.show().css("left", (daySecond / 86400 * 100).toFixed(3) + "%");
+
+        let segLen = clipDuration > 0 ? clipDuration : segmentSecond;
+        let cur = eleVideoPlayerJsObj.currentTime || 0;
+        let innerPct = Math.max(0, Math.min(100, cur / segLen * 100));
+        $(".segment-item.segment-playing .seg-progress").css("width", innerPct.toFixed(2) + "%");
+    }
+
+    // 片段内的时间（不带日期），用于悬停提示的结束端
+    function f_fmtTimeTs(ts) {
+        let d = new Date(ts * 1000);
+        return p2(d.getHours()) + ":" + p2(d.getMinutes()) + ":" + p2(d.getSeconds());
+    }
+
+    function f_syncPlayBtn() {
+        let playing = !!clipUrl && !eleVideoPlayerJsObj.paused && !eleVideoPlayerJsObj.ended;
+        $("#btn_play i").attr("class", playing ? "fa fa-pause" : "fa fa-play");
+        $("#play_text").text(playing ? _t("timeplayer_pause", "暂停") : _t("timeplayer_play", "播放"));
+    }
+
+    // ===== 播放偏好（切换片段不应丢失） =====
+    function f_savePrefs() {
+        localStorage.setItem("tp_rate", playRate);
+        localStorage.setItem("tp_volume", playVolume);
+        localStorage.setItem("tp_muted", isMuted ? "1" : "0");
+    }
+
+    function f_applyPrefs() {
+        // localStorage 里可能存了下拉框没有的档位（历史版本/手改），回落到 1.0x，避免选框显示与实际倍速不一致
+        let eleRate = $("#play_rate");
+        eleRate.val(String(playRate));
+        if (eleRate.val() !== String(playRate)) {
+            playRate = 1;
+            eleRate.val("1");
+            f_savePrefs();
+        }
+        eleVideoPlayerJsObj.playbackRate = playRate;
+        eleVideoPlayerJsObj.volume = playVolume;
+        eleVideoPlayerJsObj.muted = isMuted;
+        f_syncSoundBtn();
+    }
+
+    function f_syncSoundBtn() {
+        $("#btn_sound i").attr("class", isMuted ? "fa fa-volume-off" : "fa fa-volume-up");
+        $("#sound_text").text(isMuted ? _t("timeplayer_sound_off", "静音") : _t("timeplayer_sound_on", "声音"));
+        $("#btn_sound").toggleClass("tp_on", !isMuted);
+    }
+
+    function f_changeRate(val) {
+        playRate = parseFloat(val) || 1;
+        eleVideoPlayerJsObj.playbackRate = playRate;
+        f_savePrefs();
+    }
+
+    function f_toggleSound() {
+        isMuted = !isMuted;
+        eleVideoPlayerJsObj.muted = isMuted;
+        if (!isMuted && eleVideoPlayerJsObj.volume === 0) {
+            playVolume = 1;
+            eleVideoPlayerJsObj.volume = playVolume;
+        }
+        f_syncSoundBtn();
+        f_savePrefs();
+    }
+
+    // 连续播放默认关闭，且不写入 localStorage：每次打开都从「单段播放」开始，
+    // 需要跨片段连续回看时由用户显式开启，避免默认行为踩到衔接逻辑的边界。
+    function f_syncContinueBtn() {
+        $("#continue_text").text(isContinue ? _t("timeplayer_continue_on", "连续播放")
+                                            : _t("timeplayer_continue_off", "单段播放"));
+        $("#btn_continue").toggleClass("tp_on", isContinue);
+    }
+
+    function f_toggleContinue() {
+        isContinue = !isContinue;
+        f_syncContinueBtn();
+        myToast2025(isContinue
+            ? _t("timeplayer_continue_on_tip", "已开启连续播放：一段播完会自动接着下一段")
+            : _t("timeplayer_continue_off_tip", "已切换为单段播放：播完当前片段即停止"),
+            "success", 1600);
+    }
+
+    // play() 在非静音时可能被浏览器自动播放策略拦截，降级为静音重试
+    function f_playCurrent() {
+        let __p = eleVideoPlayerJsObj.play();
+        if (__p && __p.catch) {
+            __p.catch(function () {
+                if (isMuted) { return; }
+                isMuted = true;
+                eleVideoPlayerJsObj.muted = true;
+                f_syncSoundBtn();
+                f_savePrefs();
+                let __p2 = eleVideoPlayerJsObj.play();
+                if (__p2 && __p2.catch) { __p2.catch(function () {}); }
+                myToast2025(_t("timeplayer_autoplay_muted", "浏览器要求静音才能自动播放，已切回静音"), "warning", 3000);
+            });
+        }
+    }
+
+    // ===== 取片段 =====
+    function f_openRecordFilename(timestamp) {
+        eleInputRecordVideoAddress.val("");
+        eleBtnDownload.prop("disabled", true);
+        eleBtnCopy.prop("disabled", true);
+        f_showLoading(true);
 
         $.ajax({
            url: "/streamRecord/openRecordFilename",
            type: "get",
            async: true,
-           data: {
-               "code":record_code,
-               "timestamp": timestamp
-           },
+           data: { "code": record_code, "timestamp": timestamp },
            timeout: 0,
            error: function () {
-                myToast2025(_t("timeplayer_net_error", "网络异常，请确定网络正常！"),"error");
+                f_showLoading(false);
+                myToast2025(_t("common_net_error", "网络异常，请确定网络正常！"), "error");
            },
            success: function (res) {
-               if(1000 === res.code){
-                   try { eleVideoPlayerJsObj.pause(); }catch (e) {}
-                   try { eleVideoPlayerJqueryObj.removeAttr("src"); eleVideoPlayerJqueryObj.load(); }catch (e) {}
-
-                   let info = res.info;
-                   let filename = info.filename;
-                   let url = "/storage/openAccess?filename="+filename;
-
-                   eleInputRecordVideoAddress.val(url);
-                   eleVideoPlayerJsObj.src = url;
-                   eleVideoPlayerJsObj.play();
-
-               }else{
-                   try { eleVideoPlayerJsObj.pause(); }catch (e) {}
-                   try { eleVideoPlayerJqueryObj.removeAttr("src"); eleVideoPlayerJqueryObj.load(); }catch (e) {}
-                   myToast2025(res.msg,"error");
+               f_showLoading(false);
+               if (1000 !== res.code) {
+                   // 不用其他片段替代播放：明确提示后端返回的信息，
+                   // 并刷新时间轴把蓝/灰重绘成磁盘实况（清掉僵尸蓝）
+                   myToast2025(res.msg, "error");
+                   f_openRecordTimeline(currentDateForTimeline, f_segmentOf(timestamp).hour);
+                   return;
                }
+
+               let info = res.info;
+               clipStartTimestamp = info.timestamp;          // 片段真实起始时间戳
+               clipDuration = info.duration || segmentSecond; // 片段真实时长
+
+               // 请求时间点可能落在片段内部，换算出需要 seek 的偏移，实现秒级定位
+               pendingSeekOffset = (info.request_timestamp || timestamp) - clipStartTimestamp;
+               if (pendingSeekOffset < 0 || pendingSeekOffset >= clipDuration) { pendingSeekOffset = 0; }
+
+               clipUrl = "/storage/openAccess?filename=" + info.filename;
+               eleInputRecordVideoAddress.val(clipUrl);
+               eleBtnDownload.prop("disabled", false);
+               eleBtnCopy.prop("disabled", false);
+               f_setTopMsg("");   // 新片段已接上，清掉上一段的「已播放完毕」提示
+
+               try { eleVideoPlayerJsObj.pause(); } catch (e) {}
+               try { eleVideoPlayerJqueryObj.removeAttr("src"); eleVideoPlayerJqueryObj.load(); } catch (e) {}
+
+               eleVideoPlayerJsObj.src = clipUrl;
+               f_applyPrefs();
+               f_playCurrent();
+               f_focusSegment();
            }
         });
     }
 
-    // 更新二级时间轴中正在播放的切片高亮
-    function f_updatePlayingSegment(timestamp) {
-        let date = new Date(timestamp * 1000);
-        let hour = date.getHours();
-        let minute = date.getMinutes();
-        let segIndex = Math.floor(minute / (RECORD_SEGMENT_SECOND / 60));
-
-        // 如果切换了小时，刷新二级时间轴
-        if (hour !== selectedHour) {
-            f_selectHour(hour);
-        }
-
-        // 更新高亮
-        playingSegmentIndex = segIndex;
-        $(".segment-item").removeClass("segment-playing");
-        let $seg = $(".segment-item[data-seg-index='" + segIndex + "']");
-        if ($seg.length) {
-            $seg.addClass("segment-playing");
-        }
-    }
-
-    // 选择小时，渲染二级时间轴
-    function f_selectHour(hour) {
-        selectedHour = hour;
-
-        // 更新一级时间轴选中状态
-        $(".hour-item").removeClass("hour-selected");
-        $(".hour-item[data-hour='" + hour + "']").addClass("hour-selected");
-
-        // 找到该小时的数据
-        let hourData = null;
-        for (let i = 0; i < recordTimelineData.length; i++) {
-            if (recordTimelineData[i].hour === hour) {
-                hourData = recordTimelineData[i];
-                break;
-            }
-        }
-        if (!hourData) return;
-
-        let segments = hourData.segments;
-        let validCount = 0;
-
-        // 渲染二级时间轴切片
-        let html = "";
-        for (let s = 0; s < segments.length; s++) {
-            let isValid = segments[s] === 1;
-            if (isValid) validCount++;
-            let startMin = s * (RECORD_SEGMENT_SECOND / 60);
-            let endMin = startMin + (RECORD_SEGMENT_SECOND / 60);
-            let startLabel = String(hour).padStart(2, '0') + ":" + String(startMin).padStart(2, '0');
-            let endLabel = String(hour).padStart(2, '0') + ":" + String(endMin).padStart(2, '0');
-            let title = startLabel + " - " + endLabel + (isValid ? " (" + _t("timeplayer_click_play", "点击播放") + ")" : "");
-
-            // 计算该切片对应的起始时间戳
-            let segDate = new Date(currentDateForTimeline);
-            segDate.setHours(hour, startMin, 0, 0);
-            let segTimestamp = Math.floor(segDate.valueOf() / 1000);
-
-            let cls = isValid ? "segment-valid" : "segment-empty";
-            html += "<div class='segment-item " + cls + "' data-seg-index='" + s + "' "
-                  + (isValid ? "onclick='f_openRecordFilename(" + segTimestamp + ")'" : "")
-                  + " title='" + title + "'></div>";
-        }
-        eleSegmentContainer.html(html);
-
-        // 渲染标签
-        let labelHtml = "";
-        for (let s = 0; s < segments.length; s++) {
-            let startMin = s * (RECORD_SEGMENT_SECOND / 60);
-            labelHtml += "<div class='segment-label'>" + String(startMin).padStart(2, '0') + "'</div>";
-        }
-        eleSegmentLabels.html(labelHtml);
-
-        // 更新标题
-        let hourLabel = String(hour).padStart(2, '0') + ":00 - " + String(hour).padStart(2, '0') + ":59";
-        eleSegmentHeaderText.text(hourLabel);
-        eleSegmentHeaderCount.text(validCount + "/" + segments.length);
-
-        // 显示二级时间轴
-        eleSegmentSection.show();
-
-        // 恢复播放高亮
-        if (currentTimestamp > 0) {
-            let date = new Date(currentTimestamp * 1000);
-            if (date.getHours() === hour) {
-                let segIndex = Math.floor(date.getMinutes() / (RECORD_SEGMENT_SECOND / 60));
-                $(".segment-item[data-seg-index='" + segIndex + "']").addClass("segment-playing");
-            }
-        }
-    }
-
-    // 保存当前查询日期的JS Date对象，用于计算时间戳
-    let currentDateForTimeline = new Date();
-
-    function f_openRecordTimeline(date) {
+    // ===== 取时间轴 =====
+    function f_openRecordTimeline(date, keepHour) {
        try {
             eleVideoPlayerJsObj.pause();
             eleVideoPlayerJqueryObj.removeAttr("src");
             eleVideoPlayerJqueryObj.load();
-       }catch (e) {
-           console.log("f_openRecordTimeline error:",e)
+       } catch (e) {
+           console.log("f_openRecordTimeline error:", e);
        }
 
-       currentTimestamp = 0;
+       clipStartTimestamp = 0;
+       clipDuration = 0;
+       clipUrl = "";
+       pendingSeekOffset = 0;
        selectedHour = -1;
-       playingSegmentIndex = -1;
+       eleInputRecordVideoAddress.val("");
+       eleBtnDownload.prop("disabled", true);
+       eleBtnCopy.prop("disabled", true);
+       eleHourPlayhead.hide();
        eleSegmentSection.hide();
+       eleTimelineEmpty.hide();
+       eleSliceGranularity.text("--");
+       f_hideTip();
+       f_syncPlayBtn();
+       f_setTopMsg("");
+       f_showLoading(true);
 
        currentDateForTimeline = new Date(date);
 
-        let timestamp = parseInt(date.valueOf() / 1000);
+       let timestamp = parseInt(date.valueOf() / 1000);
         $.ajax({
            url: "/streamRecord/openRecordTimeline",
            type: "get",
            async: true,
-           data: {
-               "code":record_code,
-               "timestamp": timestamp
-           },
+           data: { "code": record_code, "timestamp": timestamp },
            timeout: 0,
            error: function () {
-                myToast2025(_t("timeplayer_net_error", "网络异常，请确定网络正常！"),"error");
+                f_showLoading(false);
+                f_renderTimelineError(_t("common_net_error", "网络异常，请确定网络正常！"));
            },
            success: function (res) {
-
-               if(1000 === res.code){
-                    let data = res.data;
-                    recordTimelineData = data;
-
-                    // 渲染一级时间轴：24小时
-                    let hourHtml = "";
-                    for (let i = 0; i < data.length; i++) {
-                        let hour = data[i].hour;
-                        let segments = data[i].segments;
-                        let validCount = 0;
-                        for (let s = 0; s < segments.length; s++) {
-                            if (segments[s] === 1) validCount++;
-                        }
-
-                        let cls = "";
-                        let title = "";
-                        let hourLabel = String(hour).padStart(2, '0');
-
-                        if (validCount === segments.length) {
-                            cls = "hour-valid";
-                            title = hourLabel + ":00 " + _t("timeplayer_all_recorded", "全部已录像");
-                        } else if (validCount > 0) {
-                            cls = "hour-partial";
-                            title = hourLabel + ":00 " + _t("timeplayer_partial_recorded", "部分录像") + " (" + validCount + "/" + segments.length + ")";
-                        } else {
-                            cls = "hour-empty";
-                            title = hourLabel + ":00 " + _t("timeplayer_not_recorded", "无录像");
-                        }
-
-                        let validPct = Math.round((validCount / segments.length) * 100);
-                        hourHtml += "<div class='hour-item " + cls + "' data-hour='" + hour + "' "
-                                  + "style='--valid-pct:" + validPct + "%' "
-                                  + "onclick='f_selectHour(" + hour + ")' "
-                                  + "title='" + title + "'>"
-                                  + hourLabel + "</div>";
-                    }
-                    eleHourContainer.html(hourHtml);
-
-                    // 默认选中当前小时
-                    let nowHour = new Date().getHours();
-                    if (date.toDateString() === new Date().toDateString()) {
-                        f_selectHour(nowHour);
-                    } else {
-                        // 选中第一个有录像的小时，否则选0点
-                        let firstValidHour = -1;
-                        for (let i = 0; i < data.length; i++) {
-                            let segs = data[i].segments;
-                            let hasValid = false;
-                            for (let s = 0; s < segs.length; s++) {
-                                if (segs[s] === 1) { hasValid = true; break; }
-                            }
-                            if (hasValid) { firstValidHour = data[i].hour; break; }
-                        }
-                        f_selectHour(firstValidHour >= 0 ? firstValidHour : 0);
-                    }
-
-                    // 渲染 rangeSlider（保留原功能）
-                    let date_year = date.getFullYear()
-                    let date_month = date.getMonth()
-                    let date_day = date.getDate()
-                    let date_hour = date.getHours()
-                    let date_minute = date.getMinutes()
-
-                    eleInputTimelineDiv.html("<input id=\"timeline\" type=\"text\" name=\"\" />")
-                    let eleInputTimeline = $("#timeline");
-
-                    eleInputTimeline.ionRangeSlider({
-                        skin: "round",
-                        min: (new Date(date_year, date_month, date_day, 0, 0, 0)).valueOf(),
-                        max: (new Date(date_year, date_month, date_day, 23, 59, 59)).valueOf(),
-                        from: (new Date(date_year, date_month, date_day, date_hour, date_minute)).valueOf(),
-                        step: 1,
-                        grid: true,
-                        grid_num: 4,
-                        prettify: tsToDate,
-                        onStart: function (data) {},
-                        onChange: function (data) {},
-                        onFinish: function (data) {
-                             let timestamp = parseInt(data.from / 1000);
-                             f_openRecordFilename(timestamp);
-                        },
-                        onUpdate: function (data) {}
-                    });
-
-               }else{
-                    myToast2025(res.msg,"error");
+               f_showLoading(false);
+               if (1000 !== res.code) {
+                    f_renderTimelineError(res.msg);
+                    myToast2025(res.msg, "error");
+                    return;
                }
+
+               let data = res.data || [];
+               recordTimelineData = data;
+               if (data.length > 0 && data[0].segments && data[0].segments.length > 0) {
+                   // 切片时长由后端返回的切片数量推导，前端不再硬编码
+                   segmentSecond = 3600 / data[0].segments.length;
+               }
+
+               f_renderHourBar();
+               f_updateSliceGranularity();
+
+               let allEmpty = true;
+               for (let i = 0; i < data.length && allEmpty; i++) {
+                   for (let s = 0; s < data[i].segments.length; s++) {
+                       if (data[i].segments[s] === 1) { allEmpty = false; break; }
+                   }
+               }
+
+               if (data.length === 0 || allEmpty) {
+                   f_showTimelineEmpty(_t("timeplayer_no_record", "该日期没有录像"));
+                   eleSegmentSection.hide();
+                   return;
+               }
+               eleTimelineEmpty.hide();
+
+               // 默认选中：URL 指定的小时 → 当天选当前小时 → 其他日期选第一个有录像的小时
+               let wantHour = -1;
+               if (keepHour >= 0 && keepHour <= 23) {
+                   wantHour = keepHour;
+               } else if (date.toDateString() === new Date().toDateString()) {
+                   wantHour = new Date().getHours();
+               } else {
+                   for (let i = 0; i < data.length; i++) {
+                       let segs = data[i].segments;
+                       let hasValid = false;
+                       for (let s = 0; s < segs.length; s++) {
+                           if (segs[s] === 1) { hasValid = true; break; }
+                       }
+                       if (hasValid) { wantHour = data[i].hour; break; }
+                   }
+               }
+               f_selectHour(wantHour >= 0 ? wantHour : 0);
            }
         });
     }
 
-    function tsToDate (timestamp) {
-        let d = new Date(timestamp);
-        let locale = "{{ T_SELECTED_LANG }}" === "en" ? "en-US" : "zh-CN";
-        return d.toLocaleDateString(locale, {
-            month: 'long',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-        });
+    function f_showTimelineEmpty(msg) {
+        $("#timeline_empty_text").text(msg || "");
+        eleTimelineEmpty.show();
     }
+
+    // 接口失败时必须清掉旧时间轴，否则用户会把上一天的录像当成这一天的
+    function f_renderTimelineError(msg) {
+        recordTimelineData = [];
+        eleHourContainer.empty();
+        eleSegmentSection.hide();
+        eleHourPlayhead.hide();
+        eleSliceGranularity.text("--");
+        f_showTimelineEmpty(msg || _t("timeplayer_load_failed", "时间轴加载失败"));
+    }
+
+    // ===== 片段衔接 =====
+    eleVideoPlayerJsObj.addEventListener("ended", function () {
+        f_syncPlayBtn();
+
+        if (!isContinue || !clipStartTimestamp) {
+            if (!isContinue) { f_setTopMsg(_t("timeplayer_single_done", "当前片段已播放完毕（连续播放未开启）")); }
+            return;
+        }
+
+        // 用片段真实起始时间定位，再向后找下一个真实存在的切片，跳过录像空洞
+        let pos = f_segmentOf(clipStartTimestamp);
+        let next = f_findNeighborSegment(pos.hour, pos.seg, 1);
+        if (next) {
+            f_openRecordFilename(f_segmentTimestamp(next.hour, next.seg));
+        } else {
+            eleHourPlayhead.hide();
+            f_setTopMsg(_t("timeplayer_play_finished", "当天录像已播放完毕"));
+            myToast2025(_t("timeplayer_play_finished", "当天录像已播放完毕"), "success", 1500);
+        }
+    });
+
+    eleVideoPlayerJsObj.addEventListener("loadedmetadata", function () {
+        if (pendingSeekOffset > 0 && eleVideoPlayerJsObj.duration
+                && pendingSeekOffset < eleVideoPlayerJsObj.duration - 0.5) {
+            try { eleVideoPlayerJsObj.currentTime = pendingSeekOffset; } catch (e) {}
+        }
+        pendingSeekOffset = 0;
+        f_updatePlayhead();
+    });
+
+    eleVideoPlayerJsObj.addEventListener("timeupdate", f_updatePlayhead);
+    eleVideoPlayerJsObj.addEventListener("play", function () { f_applyPrefs(); f_syncPlayBtn(); });
+    eleVideoPlayerJsObj.addEventListener("pause", f_syncPlayBtn);
+    eleVideoPlayerJsObj.addEventListener("error", function () {
+        if (clipUrl) { myToast2025(_t("timeplayer_play_error", "录像片段播放失败"), "error"); }
+    });
+
+    // ===== 快捷操作 =====
+    function f_playRelativeSegment(dir) {
+        if (!clipStartTimestamp) {
+            myToast2025(_t("timeplayer_nothing_playing", "请先在时间轴上选择一段录像"), "warning");
+            return;
+        }
+        let pos = f_segmentOf(clipStartTimestamp);
+        let target = f_findNeighborSegment(pos.hour, pos.seg, dir);
+        if (target) {
+            f_openRecordFilename(f_segmentTimestamp(target.hour, target.seg));
+        } else {
+            myToast2025(dir > 0 ? _t("timeplayer_no_next", "后面没有录像了")
+                                : _t("timeplayer_no_prev", "前面没有录像了"), "warning");
+        }
+    }
+
+    function f_seekBy(delta) {
+        if (!clipUrl) { return; }
+        let target = eleVideoPlayerJsObj.currentTime + delta;
+        target = Math.max(0, Math.min(target, eleVideoPlayerJsObj.duration || target));
+        try { eleVideoPlayerJsObj.currentTime = target; } catch (e) {}
+    }
+
+    function f_togglePlay() {
+        if (!clipUrl) {
+            myToast2025(_t("timeplayer_nothing_playing", "请先在时间轴上选择一段录像"), "warning");
+            return;
+        }
+        if (eleVideoPlayerJsObj.paused) { f_playCurrent(); } else { eleVideoPlayerJsObj.pause(); }
+    }
+
+    function f_toggleFullscreen() {
+        let el = eleVideoPlayerJsObj;
+        if (document.fullscreenElement) {
+            document.exitFullscreen();
+        } else if (el.requestFullscreen) {
+            el.requestFullscreen();
+        } else if (el.webkitRequestFullscreen) {
+            el.webkitRequestFullscreen();
+        }
+    }
+
+    // 截图：取证场景的刚需，文件名带上墙上时间
+    function f_takeSnapshot() {
+        if (!clipUrl || !eleVideoPlayerJsObj.videoWidth) {
+            myToast2025(_t("timeplayer_snapshot_empty", "当前没有可截图的画面"), "warning");
+            return;
+        }
+        let canvas = document.createElement("canvas");
+        canvas.width = eleVideoPlayerJsObj.videoWidth;
+        canvas.height = eleVideoPlayerJsObj.videoHeight;
+        canvas.getContext("2d").drawImage(eleVideoPlayerJsObj, 0, 0, canvas.width, canvas.height);
+
+        let wallTs = clipStartTimestamp + eleVideoPlayerJsObj.currentTime;
+        let a = document.createElement("a");
+        a.href = canvas.toDataURL("image/jpeg", 0.92);
+        a.download = record_code + "_" + f_fmtDateTime(wallTs).replace(/[-: ]/g, "") + ".jpg";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        myToast2025(_t("timeplayer_snapshot_ok", "截图已保存"), "success", 1200);
+    }
+
+    document.addEventListener("keydown", function (e) {
+        let tag = (e.target.tagName || "").toLowerCase();
+        // input/select/textarea 里打字不触发快捷键；button 聚焦时空格/回车交给浏览器原生 click，避免双触发
+        if (tag === "input" || tag === "select" || tag === "textarea" || tag === "button") { return; }
+        // 修饰键组合（Ctrl+F 查找、Ctrl+S 保存等）交还给浏览器
+        if (e.ctrlKey || e.metaKey || e.altKey) { return; }
+
+        switch (e.code) {
+            case "Space":       e.preventDefault(); f_togglePlay(); break;
+            case "ArrowLeft":   e.preventDefault(); f_seekBy(-5); break;
+            case "ArrowRight":  e.preventDefault(); f_seekBy(5); break;
+            // 上/下一段、全屏、截图：长按会连发请求/动作，只响应单击
+            case "ArrowUp":     e.preventDefault(); if (!e.repeat) { f_playRelativeSegment(-1); } break;
+            case "ArrowDown":   e.preventDefault(); if (!e.repeat) { f_playRelativeSegment(1); } break;
+            case "KeyF":        if (!e.repeat) { f_toggleFullscreen(); } break;
+            case "KeyS":        if (!e.repeat) { f_takeSnapshot(); } break;
+        }
+    });
+
+    // ===== 复制 / 下载 =====
+    function f_copyAddress() {
+        if (!clipUrl) {
+            myToast2025(_t("timeplayer_no_clip", "请先播放一段录像"), "warning");
+            return;
+        }
+        let absUrl = window.location.origin + clipUrl;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(absUrl).then(function () {
+                myToast2025(_t("timeplayer_copy_ok", "已复制播放地址"), "success", 1200);
+            }, function () {
+                f_copyAddressFallback(absUrl);
+            });
+        } else {
+            f_copyAddressFallback(absUrl);
+        }
+    }
+
+    // 非 https / 旧浏览器下 navigator.clipboard 不可用，退回到 execCommand
+    function f_copyAddressFallback(text) {
+        let el = document.createElement("textarea");
+        el.value = text;
+        el.style.position = "fixed";
+        el.style.top = "-1000px";
+        el.style.opacity = "0";
+        document.body.appendChild(el);
+        el.select();
+        let ok = false;
+        try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+        document.body.removeChild(el);
+        myToast2025(ok ? _t("timeplayer_copy_ok", "已复制播放地址")
+                       : _t("timeplayer_copy_fail", "复制失败，请手动选中复制"),
+                   ok ? "success" : "warning", 1400);
+    }
+
+    function f_downloadRecordVideo() {
+        if (!clipUrl) {
+            myToast2025(_t("timeplayer_no_clip", "请先播放一段录像"), "warning");
+            return;
+        }
+        window.open(clipUrl + "&download=1");
+    }
+
+    // ===== 页面初始化 =====
+    let urlState = f_readUrlState();
 
     eleInputRecordDate.dateRangePicker({
         language: "{{ T_SELECTED_LANG }}" === "en" ? "en" : "cn",
@@ -715,21 +1486,30 @@
         singleMonth: true,
         beforeShowDay: function(time)
         {
-            let cost_ms = current_date - time;
-            let cost_day = cost_ms / (1000 * 60 * 60 * 24);
-            let valid = false;
-            if (cost_day >=0 && cost_day <= record_day){
-                valid = true;
-            }
-            let tip = valid ? '' : _t("timeplayer_not_recorded_tip", "未录像");
-            return [valid,'',tip];
+            let cost_day = (new Date() - time) / (1000 * 60 * 60 * 24);
+            let valid = (cost_day >= 0 && cost_day <= record_day);
+            return [valid, '', valid ? '' : _t("timeplayer_not_recorded_tip", "未录像")];
         }
-    }).bind('datepicker-change',function(event,obj)
-        {
-            f_openRecordTimeline(obj.date1);
-        });
+    }).bind('datepicker-change', function(event, obj) {
+        f_openRecordTimeline(obj.date1);
+    });
 
-    f_openRecordTimeline(current_date);
+    // URL 里带 date 时，除了让选择器定位到该日期，输入框本身也要显示出来
+    let initDate = urlState.date || new Date();
+    if (urlState.date) {
+        try {
+            let __drp = eleInputRecordDate.data('dateRangePicker');
+            if (__drp && __drp.setDateRange) { __drp.setDateRange(urlState.date, urlState.date); }
+        } catch (e) {
+            console.log("restore date error:", e);
+        }
+    }
+    eleInputRecordDate.val(f_fmtDay(initDate));
+
+    f_applyPrefs();
+    f_syncContinueBtn();
+    f_syncPlayBtn();
+    f_openRecordTimeline(initDate, urlState.hour);
 
 </script>
 

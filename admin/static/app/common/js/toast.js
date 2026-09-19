@@ -5,8 +5,10 @@
  * @param {number} duration - 显示时长(毫秒)，默认2000ms
  */
 function myToast2025(message, type, duration) {
-    // 默认参数
-    duration = duration || 2000;
+    // 默认参数：长内容自动延长展示时间，保证看得完
+    if (!duration) {
+        duration = message && message.length > 80 ? 6000 : 2000;
+    }
 
     // 类型配置
     const config = {
@@ -32,16 +34,29 @@ function myToast2025(message, type, duration) {
 
     const style = config[type] || config.success;
 
+    // 管理端左侧有 200px 侧边栏（.right_col margin-left:200px），视觉中心在内容区而非视口。
+    // 有侧边栏时按 right_col 居中；侧边栏收起或窄屏(<=991px)时 right_col 铺满，自然退回视口居中。
+    let centerX = window.innerWidth / 2;
+    let contentCol = document.querySelector('.right_col');
+    if (contentCol) {
+        let cr = contentCol.getBoundingClientRect();
+        if (cr.left > 0 && cr.width >= window.innerWidth * 0.5) {
+            centerX = cr.left + cr.width / 2;
+        }
+    }
+
     // 创建Toast容器
     const toast = document.createElement('div');
     toast.style.cssText = `
         position: fixed;
         top: 20%;
-        left: 50%;
+        left: ${centerX}px;
         transform: translateX(-50%);
         z-index: 999999;
         min-width: 300px;
-        max-width: 500px;
+        max-width: min(560px, calc(100vw - 48px));
+        max-height: 60vh;
+        overflow-y: auto;
         padding: 16px 20px;
         background: ${style.bg};
         border: 2px solid ${style.border};
@@ -72,7 +87,7 @@ function myToast2025(message, type, duration) {
         flex-shrink: 0;
     `;
 
-    // 文本
+    // 文本：允许任意长串换行（错误信息里的 URL / 参数串），保留调用方自带的 \n
     const text = document.createElement('span');
     text.textContent = message;
     text.style.cssText = `
@@ -81,6 +96,10 @@ function myToast2025(message, type, duration) {
         font-weight: 500;
         line-height: 1.5;
         flex: 1;
+        min-width: 0;
+        overflow-wrap: anywhere;
+        word-break: normal;
+        white-space: pre-wrap;
     `;
 
     // 关闭按钮

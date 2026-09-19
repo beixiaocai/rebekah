@@ -277,29 +277,6 @@
         font-family: 'Courier New', monospace;
     }
 
-    .xc_type-badge {
-        display: inline-block;
-        padding: 3px 12px;
-        font-size: 12px;
-        border-radius: 9999px;
-        font-weight: 500;
-    }
-
-    .xc_type-detect {
-        background: #eff6ff;
-        color: #2563eb;
-    }
-
-    .xc_type-classify {
-        background: #fffbeb;
-        color: #b45309;
-    }
-
-    .xc_type-track {
-        background: #f0fdf4;
-        color: #15803d;
-    }
-
     .xc_id-badge {
         display: inline-block;
         min-width: 28px;
@@ -435,13 +412,13 @@
                                         <td><span class="xc_algorithm-name">{{ d.name }}</span></td>
                                         <td>
                                             {% if d.algorithm_type == "Detect" %}
-                                            <span class="xc_type-badge xc_type-detect">{{ T.algo_detect|default:'检测算法' }}</span>
+                                            {{ T.algo_detect|default:'检测算法' }}
                                             {% elif d.algorithm_type == "Classify" %}
-                                            <span class="xc_type-badge xc_type-classify">{{ T.algo_classify|default:'分类算法' }}</span>
+                                            {{ T.algo_classify|default:'分类算法' }}
                                             {% elif d.algorithm_type == "Track" %}
-                                            <span class="xc_type-badge xc_type-track">{{ T.algo_track|default:'特征算法' }}</span>
+                                            {{ T.algo_track|default:'特征算法' }}
                                             {% else %}
-                                            <span class="xc_type-badge">{{ d.algorithm_type_name }}</span>
+                                            {{ d.algorithm_type_name }}
                                             {% endif %}
                                         </td>
                                         <td>

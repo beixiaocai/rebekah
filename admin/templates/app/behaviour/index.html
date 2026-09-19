@@ -276,39 +276,6 @@
         font-family: 'Courier New', monospace;
     }
 
-    .xc_way-badge {
-        display: inline-block;
-        padding: 3px 12px;
-        font-size: 12px;
-        border-radius: 9999px;
-        font-weight: 500;
-    }
-
-    .xc_way-system {
-        background: #eff6ff;
-        color: #2563eb;
-    }
-
-    .xc_way-library {
-        background: #eef2ff;
-        color: #4f46e5;
-    }
-
-    .xc_way-api {
-        background: #f0fdf4;
-        color: #15803d;
-    }
-
-    .xc_way-apiv2 {
-        background: #fdf2f8;
-        color: #be185d;
-    }
-
-    .xc_way-apiv3 {
-        background: #fffbeb;
-        color: #b45309;
-    }
-
     .xc_id-badge {
         display: inline-block;
         min-width: 28px;
@@ -642,15 +609,15 @@
                                         <td><span class="xc_algorithm-name">{{ d.name }}</span></td>
                                         <td>
                                             {% if d.way_code == "SYSTEM" %}
-                                            <span class="xc_way-badge xc_way-system">{{ d.way_code }}</span>
+                                            {{ d.way_code }}
                                             {% elif d.way_code == "API" %}
-                                            <span class="xc_way-badge xc_way-api">{{ d.way_code }}</span>
+                                            {{ d.way_code }}
                                             {% elif d.way_code == "APIv2" %}
-                                            <span class="xc_way-badge xc_way-apiv2">{{ d.way_code }}</span>
+                                            {{ d.way_code }}
                                             {% elif d.way_code == "APIv3" %}
-                                            <span class="xc_way-badge xc_way-apiv3">{{ d.way_code }}</span>
+                                            {{ d.way_code }}
                                             {% else %}
-                                            <span class="xc_way-badge">{{ d.way_code }}</span>
+                                            {{ d.way_code }}
                                             {% endif %}
                                         </td>
                                         <td>

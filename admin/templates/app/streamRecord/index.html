@@ -599,12 +599,13 @@
               <table class="xc_table">
                 <thead>
                   <tr>
-                    <th style="width: 50px;">ID</th>
-                    <th style="width: 110px;">{{ T.recordplan_code|default:'编号' }}</th>
-                    <th style="width: 200px;">{{ T.recordplan_camera|default:'摄像头' }}</th>
-                    <th style="width: 80px;">{{ T.recordplan_days|default:'录像天数' }}</th>
-                    <th style="width: 90px;">{{ T.recordplan_audio|default:'音频' }}</th>
-                    <th style="width: 70px;">{{ T.recordplan_status|default:'状态' }}</th>
+                    <th style="width: 40px;">ID</th>
+                    <th style="width: 95px;">{{ T.recordplan_code|default:'编号' }}</th>
+                    <th style="width: 150px;">{{ T.recordplan_camera|default:'摄像头' }}</th>
+                    <th style="width: 60px;">{{ T.recordplan_days|default:'录像天数' }}</th>
+                    <th style="width: 70px;">{{ T.recordplan_audio|default:'音频' }}</th>
+                    <th style="width: 120px;">{{ T.recordplan_status|default:'状态' }}</th>
+                    <th style="width: 170px;">{{ T.recordplan_last_record|default:'最后录像' }}</th>
                     <th style="width: 140px;">{{ T.recordplan_create_time|default:'添加时间' }}</th>
                     <th style="width: 180px;">{{ T.recordplan_action|default:'操作' }}</th>
                   </tr>
@@ -633,6 +634,17 @@
                         <span class="xc_status-enabled"><i class="fa fa-circle"></i> {{ T.recordplan_enable|default:'开启' }}</span>
                       {% else %}
                         <span class="xc_status-disabled"><i class="fa fa-circle"></i> {{ T.recordplan_disable|default:'关闭' }}</span>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if d.record_last_time %}
+                        <div style="font-size:12px;color:#6b7280;white-space:nowrap;">{{ d.record_last_time }}</div>
+                        <div style="font-size:12px;color:#9ca3af;white-space:nowrap;">{{ T.recordplan_today|default:'今日' }} {{ d.record_today_minute }} {{ T.recordplan_minute_unit|default:'分钟' }}</div>
+                        {% if d.is_record == 1 and d.record_idle_second > 900 %}
+                          <div style="font-size:12px;color:#dc2626;white-space:nowrap;"><i class="fa fa-exclamation-triangle" style="font-size:12px;"></i> {{ T.recordplan_record_interrupted|default:'录像已中断' }}</div>
+                        {% endif %}
+                      {% else %}
+                        <span style="font-size:13px;color:#dc2626;">{{ T.recordplan_never_record|default:'从未录像' }}</span>
                       {% endif %}
                     </td>
                     <td>{{ d.create_time }}</td>
@@ -824,6 +836,11 @@
     }
     
     // 加载摄像头列表
+    function f_escapeHtml(s) {
+        return String(s === undefined || s === null ? "" : s).replace(/[&<>"']/g, function (c) {
+            return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];
+        });
+    }
     function loadStreams(selectedCode) {
         $.ajax({
             url: '/stream/openIndex',
@@ -837,11 +854,11 @@
                     for (let group of res.data) {
                         streams = streams.concat(group);
                     }
-                    
+
                     let html = '<option value="">' + _t("recordplan_select_camera", "请选择摄像头") + '</option>';
                     for (let stream of streams) {
                         let selected = selectedCode && stream.code === selectedCode ? 'selected' : '';
-                        html += `<option value="${stream.code}" ${selected}>${stream.nickname}</option>`;
+                        html += `<option value="${f_escapeHtml(stream.code)}" ${selected}>${f_escapeHtml(stream.nickname)}</option>`;
                     }
                     $("#input_stream_code").html(html);
                 }
@@ -914,7 +931,7 @@
     
     function f_timeplayer(code) {
         let url = "/streamRecord/index?access=timeplayer&code=" + code;
-        window.location.href = url;
+        window.open(url);
     }
     
     function f_open_player(stream_app, stream_name) {
@@ -922,10 +939,21 @@
     }
 
     function f_del(code) {
-        if (!confirm(_t("recordplan_confirm_delete", "确认删除该录像计划吗？"))) {
+        // 删除录像计划会连带 rmtree 删除该计划已录制的全部录像文件，属于不可逆操作，需要双重确认
+        let msg = _t("recordplan_confirm_delete", "删除该录像计划会同时删除它已录制的全部录像文件，且无法恢复。\n\n确认继续吗？");
+        if (!confirm(msg)) {
             return;
         }
-        
+
+        let inputCode = prompt(_t("recordplan_confirm_delete_input", "请输入录像编号以确认删除："), "");
+        if (inputCode === null) {
+            return;
+        }
+        if (inputCode.trim() !== code) {
+            myToast2025(_t("recordplan_delete_code_mismatch", "编号不一致，已取消删除"), "warning");
+            return;
+        }
+
         eleTopLoading.show();
         $.ajax({
             url: '/streamRecord/openDel',

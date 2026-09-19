@@ -282,16 +282,6 @@
         font-family: 'Courier New', monospace;
     }
 
-    .xc_mode-badge {
-        display: inline-block;
-        padding: 3px 12px;
-        font-size: 12px;
-        border-radius: 9999px;
-        font-weight: 500;
-        background: #eff6ff;
-        color: #2563eb;
-    }
-
     .xc_id-badge {
         display: inline-block;
         min-width: 28px;
@@ -428,9 +418,7 @@
                                         <td><span class="xc_id-badge">{{ d.id }}</span></td>
                                         <td><span class="xc_algorithm-code">{{ d.code }}</span></td>
                                         <td><span class="xc_algorithm-name">{{ d.name }}</span></td>
-                                        <td>
-                                            <span class="xc_mode-badge">{{ d.mode_name }}</span>
-                                        </td>
+                                        <td>{{ d.mode_name }}</td>
                                         <td style="display: none;">{{ d.deploy_process_index }}</td>
                                         <td>{{ d.max_concurrency }}</td>
                                         <td>{{ d.concurrency_unit_length }}</td>
